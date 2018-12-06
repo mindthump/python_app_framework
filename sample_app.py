@@ -10,7 +10,7 @@ class SampleApp(app_framework.AppFramework):
 
     def additional_arguments(self):
         self.parser.add_argument(
-            "--omething",
+            "--something",
             action="store",
             env_var="SOMETHING",
             default="e854ac52fca74c9eb0495589727a63b0",

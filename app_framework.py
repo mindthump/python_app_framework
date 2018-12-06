@@ -65,9 +65,7 @@ class AppFramework(object):
         self.logger = app_utils.initialize_logging()
         # requests.packages.urllib3.disable_warnings()
         # Quiet stupid requests "http connection" messages
-        logging.getLogger("toolbox.requests.packages.urllib3").setLevel(
-            logging.WARNING
-        )
+        logging.getLogger("toolbox.requests.packages.urllib3").setLevel(logging.WARNING)
 
         # NOTE: This is *not* the native argument parser,
         #   it is augmented for env-vars and config files
@@ -146,6 +144,7 @@ class CIAppFrameworkError(Exception):
 
     def __init__(self, message, fail_app=True):
         from toolbox import app_utils
+
         self.logger = app_utils.initialize_logging()
         # Get the class name without hardcoding (reusable)
         if message:
