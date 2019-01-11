@@ -1,9 +1,17 @@
 import os
+import sys
+
+from pathlib2 import Path
+import contextlib
 import logging
 import logging.handlers
-from toolbox.pathlib2 import Path
 
 
+# Note: because of the singleton nature of the 'logging' package,
+#   stand-alone functions can use it as an object directly to get
+#   messages into the log. However, it skips our formatting, etc... You
+#   can run initialize_logging() in any function here; it costs little
+#   and ensures uniformity of our logs.
 def initialize_logging(
     log_id=None,
     file_log_level=logging.DEBUG,
@@ -52,3 +60,18 @@ def initialize_logging(
     # Stop requests/urllib messages: "Starting new HTTP connection (1)"
     logging.getLogger("requests").setLevel(logging.WARNING)
     return logger
+
+
+@contextlib.contextmanager
+def working_directory(path):
+    """
+    A context manager which changes the working directory to the given
+    path, and then changes it back to its previous value on exit.
+    """
+    prev_cwd = str(Path().resolve())
+    # Use str() to coerce in case we get a Path
+    os.chdir(str(path))
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)
