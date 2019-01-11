@@ -143,6 +143,7 @@ class AppFramework(object):
         return rc
 
     def args_from_dict(self, args_dict):
+        # TODO: Find the argument's Actions object?
         args = []
         for k, v in args_dict.items():
             if v is None:
@@ -191,17 +192,19 @@ class AppFrameworkError(Exception):
 
 
 def locate_toolbox_root():
-    # First put the repo root directory on sys.path from the root, the
-    # parent, or a subdirectory. Users do need to start from one of
-    # these places, otherwise it raises an exception. This lets us get
-    # at our own packages in the usrlocallib directory. It
-    # looks relative to the current working directory(os.getcwd), not
-    # the location of the script (__file__).
+    # First put the repo root directory on sys.path from the root,
+    # the parent, or a subdirectory. Users do need to start from one
+    # of these places, otherwise it raises an exception. This lets us
+    # get at our own packages in the toolbox directory. It looks
+    # relative to the current working directory(os.getcwd), not the
+    # location of the script (__file__). Here I only look up and down
+    # one directory from this script.
+
     toolbox_root = ""
     if os.path.isdir("toolbox"):
         toolbox_root = "."
     elif os.path.isdir("../toolbox"):
-        # We're in a repo root subdirectory (e.g., PushVerify).
+        # We're in a repo root subdirectory.
         toolbox_root = ".."
     else:
         subdirs = next(os.walk("."))[1]
