@@ -1,7 +1,5 @@
 import sys
-import os
 import app_framework
-import app_utils
 
 
 class SampleApp(app_framework.AppFramework):

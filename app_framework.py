@@ -13,6 +13,7 @@ from __future__ import print_function
 import logging
 import os
 import sys
+import json
 
 # These imports assume this is the "main" script and this file is
 # located at the project root. The directory of the file executed
@@ -21,9 +22,6 @@ import sys
 # NOTE: This means any root-level script should automatically be OK
 #  for all our standard tool imports, but any script in a lower
 #  directory won't be able to reach them without sys.path management.
-import app_utils
-import configargparse
-import requests
 
 
 # I hate it when users see traceback except for debugging.
@@ -40,6 +38,22 @@ class AppFramework(object):
         Call this from subclasses with 'super'
         """
         self.app_args = None
+        os.environ["ORIGINAL_SYSPATH"] = json.dumps(sys.path)
+        self.toolbox_root = locate_toolbox_root()
+        # Ugly but flexible.
+        app_syspath = {
+            "ROOT": "{}".format(self.toolbox_root),
+            "TOOLBOX": "{}/toolbox".format(self.toolbox_root),
+            # etc.: "DB": "{}/DB".format(self.toolbox_root),
+        }
+        # Save the current sys.path just in case (?)
+        os.environ["APP_SYSPATH"] = json.dumps(app_syspath)
+        update_syspath()
+
+        # From here on it should be safe to import any local packages
+        from toolbox import requests
+        from toolbox import configargparse
+        from toolbox import app_utils
 
         self.logger = app_utils.initialize_logging()
         self.app_args = None
@@ -155,6 +169,8 @@ class AppFrameworkError(Exception):
     """
 
     def __init__(self, message, fail_app=True):
+        from toolbox import app_utils
+
         self.logger = app_utils.initialize_logging()
         # Get the class name without hardcoding (reusable)
         if message:
@@ -164,6 +180,52 @@ class AppFrameworkError(Exception):
         if fail_app:
             self.logger.critical("Error is forcing application exit.")
             sys.exit(1)
+
+
+# A path management mechanism
+# Having a proper structure is crucial to using libraries, and ours are
+# currently very messy. We mitigate that by careful sys.path management.
+# We locate our repo root and add it along with the others using relative
+# paths converted to absolutes. We stash the required paths as JSON
+# in an environment variable then update sys.path from there.
+
+
+def locate_toolbox_root():
+    # First put the repo root directory on sys.path from the root, the
+    # parent, or a subdirectory. Users do need to start from one of
+    # these places, otherwise it raises an exception. This lets us get
+    # at our own packages in the usrlocallib directory. It
+    # looks relative to the current working directory(os.getcwd), not
+    # the location of the script (__file__).
+    toolbox_root = ""
+    if os.path.isdir("toolbox"):
+        toolbox_root = "."
+    elif os.path.isdir("../toolbox"):
+        # We're in a repo root subdirectory (e.g., PushVerify).
+        toolbox_root = ".."
+    else:
+        subdirs = next(os.walk("."))[1]
+        for subdir in subdirs:
+            # Look for a known directory
+            if os.path.isdir(os.path.join(subdir, "toolbox")):
+                # We're in the parent of repo root.
+                toolbox_root = subdir
+                break
+    return os.path.abspath(toolbox_root)
+
+
+def update_syspath():
+    # Use to ensure required modules and packages are on sys.path[].
+    # Put the required paths in APP_SYSPATH so we can call this from
+    # anywhere.
+    try:
+        required_paths = json.loads(os.getenv("APP_SYSPATH", ""))
+        # str() is for libpath2 Paths (TBD)
+        for (name, path) in {n: str(p) for n, p in required_paths.items()}.items():
+            if path and os.path.exists(path) and path not in sys.path:
+                sys.path.append(path)
+    except Exception as ex:
+        raise AppFrameworkError("Could not update sys.path: {}".format(ex.message))
 
 
 if __name__ == "__main__":
