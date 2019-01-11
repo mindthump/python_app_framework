@@ -1,6 +1,8 @@
 import os
 import sys
 
+# We should be able to import toolbox stuff here b/c this module is
+# imported after the sys.path setup
 from pathlib2 import Path
 import contextlib
 import logging

@@ -26,6 +26,7 @@ class SampleApp(app_framework.AppFramework):
             print("{}, {}!".format(self.app_args.greeting, user))
         r = self.requests.get("https://jsonplaceholder.typicode.com/todos/1")
         print("Request content:\n{}".format(r.content))
+        # DEBUG: raise app_framework.AppFrameworkError("Error Condition: RED")
         return 0
 
     def cleanup(self):

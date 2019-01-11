@@ -41,14 +41,15 @@ class AppFramework(object):
         os.environ["ORIGINAL_SYSPATH"] = json.dumps(sys.path)
         self.toolbox_root = locate_toolbox_root()
         # Ugly but flexible.
-        app_syspath = {
+        app_syspaths = {
             "ROOT": "{}".format(self.toolbox_root),
             "TOOLBOX": "{}/toolbox".format(self.toolbox_root),
             # etc.: "DB": "{}/DB".format(self.toolbox_root),
         }
-        # Save the current sys.path just in case (?)
-        os.environ["APP_SYSPATH"] = json.dumps(app_syspath)
-        update_syspath()
+        # Save the current sys.path just in case?
+        os.environ["ORIG_SYSPATH"] = json.dumps(sys.path)
+        os.environ["APP_SYSPATH"] = json.dumps(app_syspaths)
+        update_syspath(app_syspaths)
 
         # From here on it should be safe to import any local packages
         from toolbox import requests
@@ -217,12 +218,15 @@ def locate_toolbox_root():
     return os.path.abspath(toolbox_root)
 
 
-def update_syspath():
+def update_syspath(path_json=None):
     # Use to ensure required modules and packages are on sys.path[].
     # Put the required paths in APP_SYSPATH so we can call this from
     # anywhere.
     try:
-        required_paths = json.loads(os.getenv("APP_SYSPATH", ""))
+        if path_json:
+            required_paths = path_json
+        else:
+            required_paths = json.loads(os.getenv("APP_SYSPATH", ""))
         # str() is for libpath2 Paths (TBD)
         for (name, path) in {n: str(p) for n, p in required_paths.items()}.items():
             if path and os.path.exists(path) and path not in sys.path:
