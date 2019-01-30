@@ -38,7 +38,6 @@ class AppFramework(object):
         Call this from subclasses with 'super'
         """
         self.app_args = None
-        os.environ["ORIGINAL_SYSPATH"] = json.dumps(sys.path)
         self.toolbox_root = locate_toolbox_root()
         # Ugly but flexible.
         app_syspaths = {
@@ -46,8 +45,8 @@ class AppFramework(object):
             "TOOLBOX": "{}/toolbox".format(self.toolbox_root),
             # etc.: "DB": "{}/DB".format(self.toolbox_root),
         }
-        # Save the current sys.path just in case?
-        os.environ["ORIG_SYSPATH"] = json.dumps(sys.path)
+        # Save the current sys.path (in case of...?)
+        os.environ["ORIGINAL_SYSPATH"] = json.dumps(sys.path)
         os.environ["APP_SYSPATH"] = json.dumps(app_syspaths)
         update_syspath(app_syspaths)
 
