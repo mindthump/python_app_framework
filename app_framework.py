@@ -187,9 +187,7 @@ class AppFrameworkError(Exception):
 # Having a proper structure is crucial to using libraries, and ours are
 # currently very messy. We mitigate that by careful sys.path management.
 # We locate our repo root and add it along with the others using relative
-# paths converted to absolutes. We stash the required paths as JSON
-# in an environment variable then update sys.path from there.
-
+# paths converted to absolutes. We return the required paths as JSON.
 
 def locate_toolbox_root():
     # First put the repo root directory on sys.path from the root,

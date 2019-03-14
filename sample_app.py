@@ -1,4 +1,5 @@
 import sys
+import json
 import app_framework
 
 
@@ -26,6 +27,8 @@ class SampleApp(app_framework.AppFramework):
             print("{}, {}!".format(self.app_args.greeting, user))
         r = self.requests.get("https://jsonplaceholder.typicode.com/todos/1")
         print("Request content:\n{}".format(r.content))
+        r_json = json.loads(r.content)
+        self.logger.info("Title: '{}'".format(r_json.get("title", "Oooops...")))
         # DEBUG: raise app_framework.AppFrameworkError("Error Condition: RED")
         return 0
 

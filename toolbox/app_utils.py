@@ -8,6 +8,9 @@ import contextlib
 import logging
 import logging.handlers
 
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 
 # Note: because of the singleton nature of the 'logging' package,
 #   stand-alone functions can use it as an object directly to get
@@ -18,26 +21,35 @@ def initialize_logging(
     log_id=None,
     file_log_level=logging.DEBUG,
     console_log_level=logging.INFO,
-    ci_log_name=os.environ.get("CI_LOG_NAME", "common.log"),
-    fw_root=os.environ.get("WORKSPACE", "."),
+    # WORKSPACE is a Jenkins thing
+    app_root_dir=os.environ.get("WORKSPACE", "."),
+    propagate=False,
 ):
     """
-    This implementation is in-between using the basic logger and
-    a fully custom system. Since we don't have a nice module
-    structure, the __name__ trick doesn't help us and this has one
+    This implementation is in-between using the basic logger and a fully
+    custom system. Since we don't have a nice module structure where I
+    currently work, the __name__ trick doesn't help us and this has one
     less layer that can get mis-configured.
+    NOTE: IF log_id is not specified it uses the root logger.
     """
-    if log_id is None:
-        # Use the root logger.
-        logger = logging.getLogger()
-    else:
-        # This is so you can give it a name (log_id) if you insist, and
-        # it will derive from the root. The log file will be named after
-        # the log_id + '.log'
-        logger = logging.getLogger(log_id)
-        ci_log_name = "{}.log".format(log_id)
     # Log name and path
-    log_file = Path(fw_root).resolve() / ci_log_name
+    if log_id is None:
+        # This is the root log.
+        logger = logging.getLogger()
+        # This is only applicable to the root, others use the log_id.
+        ci_log_name = os.environ.get("CI_LOG_NAME", "application.log")
+    else:
+        # This is to create a child of the root logger.
+        logger = logging.getLogger(log_id)
+        # The argument 'propagate' == True will copy records up
+        # the logger hierarchy; this only makes sense for non-root
+        # loggers. These records WILL be in the console if
+        # the record's level > console_log_level.
+        logger.propagate = propagate
+        ci_log_name = "{}.log".format(log_id)
+
+    ci_log_dir = os.getenv("CI_LOG_DIR", ".")
+    log_file = Path(app_root_dir).resolve() / ci_log_dir / ci_log_name
     log_file.parent.mkdir(parents=True, exist_ok=True)
     # Set the overall lowest level to report
     logger.setLevel(logging.DEBUG)
@@ -61,6 +73,7 @@ def initialize_logging(
     logger.addHandler(ch)
     # Stop requests/urllib messages: "Starting new HTTP connection (1)"
     logging.getLogger("requests").setLevel(logging.WARNING)
+    # DEBUG: logging.info("Started logger '{}' at '{}'".format(log_id, log_file))
     return logger
 
 
