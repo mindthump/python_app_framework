@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-A framework for Python "applications".
-DO NOT COPY AND EDIT THIS FILE !!!
-Subclass and refactor, don't fork.
+A framework for command-line Python "applications", with features that I was in need of at the time.
 """
 
 # ONLY STOCK PYTHON PACKAGES HERE
