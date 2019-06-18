@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  sample-app:
+    build: .
+
+    command: python sample_app.py --greeting "Yo"
+
+    environment:
+      - NAME=Harvey
+
+    networks:
+      - sample-net
+
+    volumes:
+      - type: volume
+        source: sample-vol
+        target: /appdata
+
+  redis:
+    image: redis:4.0.11-alpine
+    networks:
+      sample-net:
+
+networks:
+  sample-net:
+
+volumes:
+  sample-vol:

@@ -51,8 +51,9 @@ class AppFramework(object):
         update_syspath(app_syspaths)
 
         # From here on it should be safe to import any local packages
-        from toolbox import requests
-        from toolbox import configargparse
+        import requests
+        import configargparse
+        # locally installed libs can live in toolbox/
         from toolbox import app_utils
 
         self.logger = app_utils.initialize_logging()
