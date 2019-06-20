@@ -51,7 +51,7 @@ class AppFramework(object):
         # From here on it should be safe to import any local packages
         import requests
         import configargparse
-        # locally installed libs can live in toolbox/
+        # locally installed libs can live in toolbox
         from toolbox import app_utils
 
         self.logger = app_utils.initialize_logging()

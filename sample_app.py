@@ -25,8 +25,11 @@ class SampleApp(app_framework.AppFramework):
         for user in self.users:
             self.logger.info("Greeting user {}.".format(user))
             print("{}, {}!".format(self.app_args.greeting, user))
-        r = self.requests.get("https://jsonplaceholder.typicode.com/todos/1")
-        print("Request content:\n{}".format(r.content))
+        headers = {"accept": "application/json", "Content-Type": "application/json"}
+        r = self.requests.post(
+            "http://spew/post", data={"name": "splunge"}, headers=headers
+        )
+        self.logger.debug("Request content:\n{}".format(r.content))
         r_json = json.loads(r.content)
         self.logger.info("Title: '{}'".format(r_json.get("title", "Oooops...")))
         # DEBUG: raise app_framework.AppFrameworkError("Error Condition: RED")

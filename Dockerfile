@@ -8,9 +8,10 @@ ENV appdir="/usr/src/app"
 
 WORKDIR ${appdir}
 
-COPY requirements.txt ${appdir}/requirements.txt
-RUN pip install -r requirements.txt
+RUN apk add curl
 
 COPY . ${appdir}
 
-CMD python ${appdir}/sample_app.py
+RUN pip install -r requirements.txt
+
+CMD python ${appdir}/sample_app.py --greeting "Salutations"

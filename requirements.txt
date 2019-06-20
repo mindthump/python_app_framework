@@ -1,3 +1,4 @@
+pip>=19.0
 requests
 ConfigArgParse
 pathlib2

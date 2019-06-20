@@ -4,26 +4,30 @@ services:
   sample-app:
     build: .
 
-    command: python sample_app.py --greeting "Yo"
+    # Keep the container running (for a day) doing nothing = lets us shell in
+    # We don't need this if it's actually running a service (e.g., http)
+    # Also, this overrides "CMD" in the Dockerfile.
+    command: sleep 1d
+    # command: python sample_app.py --greeting "Yo"
 
     environment:
       - NAME=Harvey
-
-    networks:
-      - sample-net
 
     volumes:
       - type: volume
         source: sample-vol
         target: /appdata
 
-  redis:
-    image: redis:4.0.11-alpine
-    networks:
-      sample-net:
+  spew:
+    image: kennethreitz/httpbin
 
-networks:
-  sample-net:
+    expose:
+      # Only available within the cluster
+      - "80"
+
+    ports:
+      # Open to the host
+      - "8081:80"
 
 volumes:
   sample-vol:
