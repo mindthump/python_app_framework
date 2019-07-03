@@ -9,6 +9,7 @@ ENV TITLE="good person"
 
 WORKDIR ${appdir}
 
+# for my own convenience when ssh-ing to instances
 RUN apk add curl
 RUN apk add zsh
 RUN apk add byobu
