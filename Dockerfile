@@ -12,10 +12,10 @@ WORKDIR ${appdir}
 # for my own convenience when ssh-ing to instances
 RUN apk add curl
 RUN apk add zsh
-RUN apk add byobu
+# RUN apk add byobu
 
-COPY . ${appdir}
+COPY . .
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --disable-pip-version-check -r requirements.txt
 
 CMD python ${appdir}/sample_app.py --greeting "Salutations"

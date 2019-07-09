@@ -15,4 +15,8 @@ To install libraries locally use something like:
 
 Use caution when doing this. Compiled libraries may break if they are used on the wrong platform; I try to stick to "pure python" libraries if possible.
 
-DOCKER INSTRUCTIONS COMING SOON...
+There's a Dockerfile for the sample app, and a docker-compose.yml file for the app plus an httpbin server.
+
+### IN THE WORKS
+
+I'm currently putting in my own little REST responder for custom tests and experiments. I want to put the app in a loop to exercise the responder.

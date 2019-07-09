@@ -3,6 +3,7 @@ version: '3.7'
 services:
   sample-app:
     build: .
+    image: mindthump/sample-app
 
     # Keep the container running (for a day) doing nothing = lets us shell in
     # We don't need this if it's actually running a service (e.g., http)

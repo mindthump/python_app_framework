@@ -16,7 +16,10 @@ class SampleApp(app_framework.AppFramework):
             "--greeting", action="store", env_var="GREETING", default="Hola"
         )
         self.parser.add_argument(
-            "--targeturl", action="store", env_var="TARGET_URL", default="spew"
+            "--target-hostname", action="store", env_var="TARGET_HOSTNAME", default="spew"
+        )
+        self.parser.add_argument(
+            "--target-port", action="store", env_var="TARGET_PORT", default="80"
         )
         self.parser.add_argument(
             "--title", action="store", env_var="TITLE", default="nobody"
@@ -35,10 +38,11 @@ class SampleApp(app_framework.AppFramework):
 
         request_data = {"title": self.app_args.title}
         try:
+            # TODO: Get a random fruit from the fruit-list server
             response = self.requests.post(
                 # This should be running httpbin, which reflects the request
-                # 'spew' (default) service launched in docker-compose.yml
-                "http://{target}/post".format(target=self.app_args.targeturl), json=request_data, headers=headers
+                # Service launched in docker-compose.yml
+                "http://{target}:{port}/post".format(target=self.app_args.target_hostname, port=self.app_args.target_port), json=request_data, headers=headers
             )
             response_json = response.json()
             self.logger.debug("Request content:\n{}".format(response_json))
@@ -46,11 +50,11 @@ class SampleApp(app_framework.AppFramework):
             title = json.loads(response_data).get('title', 'nobody')
             self.logger.info("{} is a {}.".format(self.users[0], title))
         except self.requests.ConnectionError as cerr:
-            self.logger.warning("Could not connect to 'spew' service, is it running? See application log for details.")
+            self.logger.warning("Could not connect to '{target}:{port}' service, is it running? See application log for details.".format(target=self.app_args.target_hostname, port=self.app_args.target_port))
             self.logger.debug("Connection Error: {}".format(cerr))
             return 66
         except Exception as ex:
-            self.logger.warning("A severe error occurred while communicating with the 'spew' service. See application log for details.")
+            self.logger.warning("A severe error occurred while communicating with the '{target}:{port}' service. See application log for details.".format(target=self.app_args.target_hostname, port=self.app_args.target_port))
             self.logger.debug("Connection Error: {}".format(ex))
             return 99
         # DEBUG: raise app_framework.AppFrameworkError("Error Condition: RED")

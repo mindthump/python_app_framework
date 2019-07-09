@@ -1,4 +1,6 @@
-pip>=19.0
+pip
 requests
 ConfigArgParse
 pathlib2
+falcon
+gunicorn
