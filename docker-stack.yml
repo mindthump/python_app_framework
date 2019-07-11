@@ -2,8 +2,7 @@ version: '3.7'
 
 services:
   greet:
-    build: .
-    image: mindthump/greet:latest
+    image: mindthump/greet
 
     # Keep the container running (for a day) doing nothing = lets us shell in
     # We don't need this if it's actually running a service (e.g., http)
@@ -14,13 +13,14 @@ services:
     environment:
       - NAME=Harvey
 
+    # I don't do anything with this (yet).
     volumes:
       - type: volume
         source: sample-vol
         target: /appdata
 
   spew:
-    image: kennethreitz/httpbin:latest
+    image: kennethreitz/httpbin
 
     deploy:
       replicas: 3

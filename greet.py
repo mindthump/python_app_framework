@@ -3,10 +3,10 @@ import json
 import app_framework
 
 
-class SampleApp(app_framework.AppFramework):
+class Greeter(app_framework.AppFramework):
     def __init__(self):
         # This call to super().__init__ is the only required element
-        super(SampleApp, self).__init__()
+        super(Greeter, self).__init__()
         # Empty or constant values
         self.users = None
 
@@ -16,7 +16,10 @@ class SampleApp(app_framework.AppFramework):
             "--greeting", action="store", env_var="GREETING", default="Hola"
         )
         self.parser.add_argument(
-            "--target-hostname", action="store", env_var="TARGET_HOSTNAME", default="spew"
+            "--target-hostname",
+            action="store",
+            env_var="TARGET_HOSTNAME",
+            default="spew",
         )
         self.parser.add_argument(
             "--target-port", action="store", env_var="TARGET_PORT", default="80"
@@ -42,19 +45,32 @@ class SampleApp(app_framework.AppFramework):
             response = self.requests.post(
                 # This should be running httpbin, which reflects the request
                 # Service launched in docker-compose.yml
-                "http://{target}:{port}/post".format(target=self.app_args.target_hostname, port=self.app_args.target_port), json=request_data, headers=headers
+                # TODO: I doubt this is solid or safe. What is the best target name?
+                "http://{target}:{port}/post".format(
+                    target=self.app_args.target_hostname, port=self.app_args.target_port
+                ),
+                json=request_data,
+                headers=headers,
             )
             response_json = response.json()
             self.logger.debug("Request content:\n{}".format(response_json))
-            response_data = response_json.get('data') or '{}'
-            title = json.loads(response_data).get('title', 'nobody')
+            response_data = response_json.get("data") or "{}"
+            title = json.loads(response_data).get("title", "nobody")
             self.logger.info("{} is a {}.".format(self.users[0], title))
         except self.requests.ConnectionError as cerr:
-            self.logger.warning("Could not connect to '{target}:{port}' service, is it running? See application log for details.".format(target=self.app_args.target_hostname, port=self.app_args.target_port))
+            self.logger.warning(
+                "Could not connect to '{target}:{port}' service, is it running? See application log for details.".format(
+                    target=self.app_args.target_hostname, port=self.app_args.target_port
+                )
+            )
             self.logger.debug("Connection Error: {}".format(cerr))
             return 66
         except Exception as ex:
-            self.logger.warning("A severe error occurred while communicating with the '{target}:{port}' service. See application log for details.".format(target=self.app_args.target_hostname, port=self.app_args.target_port))
+            self.logger.warning(
+                "A severe error occurred while communicating with the '{target}:{port}' service. See application log for details.".format(
+                    target=self.app_args.target_hostname, port=self.app_args.target_port
+                )
+            )
             self.logger.debug("Connection Error: {}".format(ex))
             return 99
         # DEBUG: raise app_framework.AppFrameworkError("Error Condition: RED")
@@ -66,6 +82,6 @@ class SampleApp(app_framework.AppFramework):
 
 
 if __name__ == "__main__":
-    app = SampleApp()
+    app = Greeter()
     result = app.execute()
     sys.exit(result)
