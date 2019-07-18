@@ -1,32 +1,55 @@
 version: '3.7'
 
+volumes:
+  appdata:
+
+networks:
+  app-net:
+    driver: overlay
+    attachable: true
+
+secrets:
+  passwords:
+    # Yup, plain text in the VCS.
+    file: ./secrets.txt
+
 services:
   greet:
-    build: .
-    image: mindthump/greet:latest
-
+    image: mindthump/greet
+    init: true
     # Keep the container running (for a day) doing nothing = lets us shell in
     # We don't need this if it's actually running a service (e.g., http)
-    # Also, this overrides "CMD" in the Dockerfile.
-    command: sleep 1d
-    # command: python greet.py --greeting "Yo"
+    # Also, this overrides "ENTRYPOINT" in the Dockerfile.
+    entrypoint: sleep
+    command: 1d
 
     environment:
       - NAME=Harvey
+      - CI_LOG_DIR=/data
 
+    # TODO: I don't do anything with this (yet).
     volumes:
       - type: volume
-        source: sample-vol
-        target: /appdata
+        source: appdata
+        target: /data
+
+    networks:
+      - app-net
+
+    secrets:
+      - passwords
 
   spew:
-    image: kennethreitz/httpbin:latest
+    image: kennethreitz/httpbin
 
     deploy:
       replicas: 3
 
     ports:
       - "8081:80"
+
+    networks:
+      - app-net
 
   watch:
     image: dockersamples/visualizer
@@ -43,5 +66,32 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
 
-volumes:
-  sample-vol:
+    networks:
+      - app-net
+
+  stash:
+    # Use 'http://localhost:5984/_utils/' for UI
+    # TODO: This needs persistent storage
+    image: couchdb
+
+    ports:
+      - "5984:5984"
+
+    networks:
+      - app-net
+
+  fruit:
+    # Dumb json list of fruit
+    image: mindthump/fruit-list:betty
+
+    ports:
+      - "8088:80"
+
+    networks:
+      - app-net
+
+    volumes:
+      - type: volume
+        source: appdata
+        target: /data
+
