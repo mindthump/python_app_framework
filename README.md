@@ -62,7 +62,7 @@ To install libraries locally use something like this:
 
 > pip install --target ./toolbox requests
 
-Use caution when doing this. Compiled libraries may break if they are used on the wrong platform; I try to stick to "pure python" libraries if possible. Or use docker.
+Use caution when doing this. Compiled libraries may break if they are used on the wrong platform; I try to stick to "pure python" libraries if possible. Or, use docker with an image like buildpack-deps.
 
 ### IN THE WORKS
 
