@@ -9,7 +9,7 @@ networks:
     attachable: true
 
 secrets:
-  passwords:
+  user-info:
     # Yup, plain text in the VCS.
     file: ./secrets.txt
 
@@ -37,7 +37,7 @@ services:
       - app-net
 
     secrets:
-      - passwords
+      - user-info
 
   spew:
     image: kennethreitz/httpbin
@@ -94,4 +94,3 @@ services:
       - type: volume
         source: appdata
         target: /data
-

@@ -49,7 +49,7 @@ class Greeter(app_framework.AppFramework):
             action="store",
             env_var="USER_INFO_PATH",
             # This should be a service secret, mounted to this service.
-            default="/run/secrets/password",
+            default="/run/secrets/user_info",
         )
 
     def prepare(self):
