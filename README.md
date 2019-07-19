@@ -20,26 +20,24 @@ When it starts as part of the stack, the entrypoint is set to sleep for one day.
 This lets you open a shell on the machine with the python app and look around, run and debug, whatever.
 When it's time to promote, set the entrypoint and command as needed.
 
-Pull the image, or build it:
+Quick docker instructions:
+```
+docker build -t mindthump/greet:latest .
+docker stack deploy -c docker-compose.yml simple
+docker container ls
+docker container exec -it CONTAINER sh
+```
 
-`docker build -t mindthump/greet:latest .`
+The sample app is extremely goofy:
 
-Prep a swarm (one node is fine, it's a demo) and deploy the application stack:
+`python greet.py`
 
-`docker stack deploy -c docker-compose.yml simple`
-
-Get the ID or name of the container (with 'greet' in the name):
-
-`docker container ls`
-
-Open a shell on the sample app's container:
-
-`docker container exec -it CONTAINER sh`
-
-This will start a tiny utility standalone/non-swarm container with ties into the stack's network, volume, and secrets.
-CI_LOG_DIR is where to put the framework's logs; on a persistent local volume (/data) they are appended from wherever the app is executed.
+The following command will start a tiny utility standalone/non-swarm container with ties into the stack's network, volume, and secrets.
+CI_LOG_DIR is where to put the framework's logs.
 
 `docker container run -it --network simple_app-net -v simple_appdata:/data -v <FULL_PATH>/python_app_framework/secrets.txt:/run/secrets/user_info --env CI_LOG_DIR=/data alpine sh`
+
+Cleaning up is an exercise left to the reader.
 
 ## python_app_framework
 
@@ -60,7 +58,7 @@ If you want to use my toolbox approach, for the sample app (greet.py) you should
 
 To install libraries locally use something like this:
 
-> pip install --target ./toolbox requests
+`pip install --target ./toolbox requests`
 
 Use caution when doing this. Compiled libraries may break if they are used on the wrong platform; I try to stick to "pure python" libraries if possible. Or, use docker with an image like buildpack-deps.
 
