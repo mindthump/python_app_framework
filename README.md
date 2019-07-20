@@ -12,7 +12,7 @@ To help me learn that, I converted this little framework's sample app into a Doc
 
 The stack includes a tiny nginx service that returns a simple JSON list of fruits, so I can play with the requests library.
 My plan is to write a simple Falcon REST app to do this and more.
-I start up a couchdb container but don't use it yet.
+I spin up a couchdb container but don't use it yet.
 Some fake user info comes in as a "service secret". (The secrets stuff needs more work to be interesting, it just let me get rid of some redundant example functionality.)
 
 All of these services are used by the newly-extended framework sample app, 'greet.py'.
