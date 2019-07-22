@@ -33,9 +33,9 @@ The sample app is extremely goofy:
 `python greet.py`
 
 The following command will start a tiny utility standalone/non-swarm container with ties into the stack's network, volume, and secrets.
-CI_LOG_DIR is where to put the framework's logs.
+AFW_LOG_DIR is where to put the framework's logs.
 
-`docker container run -it --network simple_app-net -v simple_appdata:/data -v <FULL_PATH>/python_app_framework/secrets.txt:/run/secrets/user_info --env CI_LOG_DIR=/data alpine sh`
+`docker container run -it --network simple_app-net -v simple_appdata:/data -v <FULL_PATH>/python_app_framework/secrets.txt:/run/secrets/user_info --env AFW_LOG_DIR=/data alpine sh`
 
 Cleaning up is an exercise left to the reader.
 

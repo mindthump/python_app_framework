@@ -25,10 +25,10 @@ services:
 
     environment:
       - NAME=Harvey
-      - CI_LOG_DIR=/data
+      - AFW_LOG_DIR=/data
 
-    # TODO: I don't do anything with this (yet).
     volumes:
+      - ./greet_app:/app/greet_app
       - type: volume
         source: appdata
         target: /data
@@ -82,15 +82,21 @@ services:
 
   fruit:
     # Dumb json list of fruit
-    image: mindthump/fruit-list:betty
+    image: mindthump/fruit_server:camille
 
     ports:
-      - "8088:80"
+      - "8088:8000"
 
     networks:
       - app-net
 
+    command: gunicorn --reload -b 0.0.0.0:8000 fruit_server_app.fruit_server:app -k gevent
+
+    environment:
+      - AFW_LOG_DIR=/data
+
     volumes:
+      - ./fruit_server_app:/app/fruit_server_app
       - type: volume
         source: appdata
         target: /data
