@@ -33,7 +33,7 @@ class Greeter(app_framework.AppFramework):
             "--fruit-server",
             action="store",
             env_var="FRUIT_SERVER",
-            default="http://fruit:8000/fruit",
+            default="http://fruit:80/fruit",
         )
         self.parser.add_argument(
             "--user-info-path",

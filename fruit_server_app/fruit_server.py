@@ -5,7 +5,7 @@ import os
 import falcon
 
 # NOTE: Hack.
-from fruit_server_app.app_utils import initialize_logging
+from app_utils import initialize_logging
 
 
 class FruitServer(object):
@@ -13,7 +13,7 @@ class FruitServer(object):
         """Handles GET requests"""
         resp.status = falcon.HTTP_200
         resp.body = "<h1>Ooops.</h1>"
-        with open('fruit_server_app/fruit.json') as fruit_list:
+        with open('fruit.json') as fruit_list:
             fruits = falcon.json.loads(fruit_list.read())
             random_fruit = random.choice(fruits['fruits'])
             logger.info(f"Serving fruit: {random_fruit}")

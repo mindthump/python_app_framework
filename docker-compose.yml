@@ -15,7 +15,7 @@ secrets:
 
 services:
   greet:
-    image: mindthump/greet
+    image: mindthump/greet:donna
     init: true
     # Keep the container running (for a day) doing nothing = lets us shell in
     # We don't need this if it's actually running a service (e.g., http)
@@ -28,7 +28,10 @@ services:
       - AFW_LOG_DIR=/data
 
     volumes:
-      - ./greet_app:/app/greet_app
+#      # Obviously for development experimentation only!
+#        This mounts the code live in the container
+#        This won't work when the code isn't there (e.g., PWD)
+#      - ./greet_app:/app/greet_app
       - type: volume
         source: appdata
         target: /data
@@ -38,6 +41,27 @@ services:
 
     secrets:
       - user-info
+
+  fruit:
+    # Dumb json list of fruit
+    image: mindthump/fruit_server:donna
+
+    ports:
+      - "8088:80"
+
+    networks:
+      - app-net
+
+    command: gunicorn --reload -b 0.0.0.0:80 fruit_server:app -k gevent
+
+    environment:
+      - AFW_LOG_DIR=/data
+
+    volumes:
+#      - ./fruit_server_app:/app/fruit_server_app
+      - type: volume
+        source: appdata
+        target: /data
 
   spew:
     image: kennethreitz/httpbin
@@ -80,23 +104,7 @@ services:
     networks:
       - app-net
 
-  fruit:
-    # Dumb json list of fruit
-    image: mindthump/fruit_server:camille
-
-    ports:
-      - "8088:8000"
-
-    networks:
-      - app-net
-
-    command: gunicorn --reload -b 0.0.0.0:8000 fruit_server_app.fruit_server:app -k gevent
-
-    environment:
-      - AFW_LOG_DIR=/data
-
     volumes:
-      - ./fruit_server_app:/app/fruit_server_app
       - type: volume
         source: appdata
         target: /data

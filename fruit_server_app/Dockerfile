@@ -11,9 +11,9 @@ WORKDIR ${appdir}
 # for my own convenience when ssh-ing to instances
 RUN apt-get update -y && apt-get install tmux mc vim httpie less -y --no-install-recommends
 
-# NOTE: You could copy everything to the image, but I just bind-mount the app dir in compose
-COPY requirements.txt .
+# NOTE: You can just bind-mount the app dir in compose
+#COPY requirements.txt .
+COPY . .
 
 RUN pip install --no-cache-dir --disable-pip-version-check -r requirements.txt
-
 

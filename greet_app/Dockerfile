@@ -1,17 +1,14 @@
-FROM python:3.7-alpine
+FROM python:3.7
 
 LABEL Author="github.com/mindthump"
 ENV appdir="/app"
 ENV TITLE="good person"
 
-# ... no ports needed (yet)
-# EXPOSE 5000
-
 WORKDIR ${appdir}
 
 # for my own convenience when ssh-ing to instances
-RUN apk add curl byobu mc vim
+RUN apt-get update -y && apt-get install tmux mc vim httpie less -y --no-install-recommends
 
-COPY requirements.txt .
+COPY . .
 
 RUN pip install --no-cache-dir --disable-pip-version-check -r requirements.txt
