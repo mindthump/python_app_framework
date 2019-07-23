@@ -2,7 +2,7 @@ import pytest
 import json
 from unittest.mock import MagicMock
 from fruit_server_app import fruit_server
-from fruit_server_app import app_utils
+from toolbox import app_utils
 
 
 def test_fruit_server():

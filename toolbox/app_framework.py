@@ -39,9 +39,8 @@ class AppFramework(object):
         self.toolbox_root = locate_toolbox_root()
         # Ugly but flexible.
         app_syspaths = {
-            "ROOT": "{}".format(self.toolbox_root),
-            "TOOLBOX": "{}/toolbox".format(self.toolbox_root),
-            # etc.: "DB": "{}/DB".format(self.toolbox_root),
+            "ROOT": "f{self.toolbox_root}",
+            "TOOLBOX": "f{self.toolbox_root}/toolbox"
         }
         # Save the current sys.path (in case of...?)
         os.environ["ORIGINAL_SYSPATH"] = json.dumps(sys.path)
@@ -170,7 +169,7 @@ class AppFrameworkError(Exception):
     """
 
     def __init__(self, message, fail_app=True):
-        from greet_app.toolbox import app_utils
+        from toolbox import app_utils
 
         self.logger = app_utils.initialize_logging()
         # Get the class name without hardcoding (reusable)

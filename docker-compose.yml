@@ -15,7 +15,7 @@ secrets:
 
 services:
   greet:
-    image: mindthump/greet:donna
+    image: mindthump/greet:edith
     init: true
     # Keep the container running (for a day) doing nothing = lets us shell in
     # We don't need this if it's actually running a service (e.g., http)
@@ -44,7 +44,7 @@ services:
 
   fruit:
     # Dumb json list of fruit
-    image: mindthump/fruit_server:donna
+    image: mindthump/fruit_server:edith
 
     ports:
       - "8088:80"

@@ -1,14 +1,22 @@
 import os
+import sys
 
+# We should be able to import toolbox stuff here b/c this module is
+# imported after the sys.path setup
+from pathlib import Path
+import contextlib
 import logging
 import logging.handlers
-from pathlib import Path
 
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 
-# TODO: This is copied from the toolbox, move it up and make it common
+# Note: because of the singleton nature of the 'logging' package,
+#   stand-alone functions can use it as an object directly to get
+#   messages into the log. However, it skips our formatting, etc... You
+#   can run initialize_logging() in any function here; it costs little
+#   and ensures uniformity of our logs.
 def initialize_logging(
     log_id=None,
     file_log_level=logging.DEBUG,
@@ -67,3 +75,18 @@ def initialize_logging(
     logging.getLogger("requests").setLevel(logging.WARNING)
     # DEBUG: logging.info("Started logger '{}' at '{}'".format(log_id, log_file))
     return logger
+
+
+@contextlib.contextmanager
+def working_directory(path):
+    """
+    A context manager which changes the working directory to the given
+    path, and then changes it back to its previous value on exit.
+    """
+    prev_cwd = str(Path().resolve())
+    # Use str() to coerce in case we get a Path
+    os.chdir(str(path))
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)

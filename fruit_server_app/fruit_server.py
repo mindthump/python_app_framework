@@ -5,7 +5,7 @@ import os
 import falcon
 
 # NOTE: Hack.
-from app_utils import initialize_logging
+from toolbox.app_utils import initialize_logging
 
 
 class FruitServer(object):
