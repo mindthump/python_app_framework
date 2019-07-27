@@ -57,8 +57,10 @@ class Greeter(app_framework.AppFramework):
             print(f"{self.app_args.greeting}, {user}!")
 
             try:
+                # Default title.
                 title = self.users[user].get("title", "unperson")
-                # TODO: Random fruit for now, get it based on some key?
+                # NOTE: Random fruit from simple falcon app for now,
+                # TODO: do something more interesting with that app!
                 fruit = (
                     self.requests.get(self.app_args.fruit_server)
                     .json()

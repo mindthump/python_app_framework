@@ -4,3 +4,4 @@ pathlib2
 falcon
 gunicorn
 couchDB
+ansible
