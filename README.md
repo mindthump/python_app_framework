@@ -1,5 +1,7 @@
 # My Curriculum Vitae
 
+### Note the project is in flux and might not actually run at the moment.
+
 Really, this is just samples of stuff I'm playing with in Python.
 Originally this project was all about a little framework for building command-line utility tools.
 I got tired of my own boilerplate code, and I didn't like any of the frameworks out there.
