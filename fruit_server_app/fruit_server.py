@@ -13,9 +13,9 @@ class FruitServer(object):
         """Handles GET requests"""
         resp.status = falcon.HTTP_200
         resp.body = "<h1>Ooops.</h1>"
-        with open('fruit.json') as fruit_list:
+        with open("fruit.json") as fruit_list:
             fruits = falcon.json.loads(fruit_list.read())
-            random_fruit = random.choice(fruits['fruits'])
+            random_fruit = random.choice(fruits["fruits"])
             logger.info(f"Serving fruit: {random_fruit}")
         resp.body = json.dumps({"favorite_fruit": random_fruit})
 
@@ -29,4 +29,3 @@ app = falcon.API()
 fruit_server = FruitServer()
 
 app.add_route("/fruit", fruit_server)
-
