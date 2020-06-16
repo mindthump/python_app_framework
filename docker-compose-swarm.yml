@@ -1,10 +1,14 @@
-version: '3.3'
+# This file requires a swarm!
+
+version: '3.7'
 
 volumes:
   appdata:
 
 networks:
   app-net:
+    driver: overlay
+    attachable: true
 
 secrets:
   user-info:
@@ -14,13 +18,12 @@ secrets:
 services:
   greet:
     image: mindthump/greet:edith
+    init: true
     # Keep the container running (for a day) doing nothing = lets us shell in
     # We don't need this if it's actually running a service (e.g., http)
     # Also, this overrides "ENTRYPOINT" in the Dockerfile.
     entrypoint: sleep
     command: 1d
-
-    container_name: greet
 
     environment:
       - NAME=Harvey
@@ -45,8 +48,6 @@ services:
     # Dumb json list of fruit
     image: mindthump/fruit_server:edith
 
-    container_name: fruit
-
     ports:
       - "8088:80"
 
@@ -67,7 +68,8 @@ services:
   spew:
     image: kennethreitz/httpbin
 
-    container_name: spew
+    deploy:
+      replicas: 3
 
     ports:
       - "8081:80"
@@ -75,11 +77,28 @@ services:
     networks:
       - app-net
 
+  watch:
+    image: dockersamples/visualizer
+
+    ports:
+      - "8080:8080"
+
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+    networks:
+      - app-net
+
   stash:
     # Use 'http://localhost:5984/_utils/' for UI
+    # TODO: This needs persistent storage
     image: couchdb
-
-    container_name: stash
 
     ports:
       - "5984:5984"
