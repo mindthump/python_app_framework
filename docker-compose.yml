@@ -13,80 +13,63 @@ secrets:
 
 services:
   greet:
-    image: mindthump/greet:edith
+    build:
+      context: .
+      dockerfile: greet_app/greet.dockerfile
+    image: mindthump/greet:${REVISION}
+    container_name: greet
     # Keep the container running (for a day) doing nothing = lets us shell in
     # We don't need this if it's actually running a service (e.g., http)
     # Also, this overrides "ENTRYPOINT" in the Dockerfile.
     entrypoint: sleep
     command: 1d
-
-    container_name: greet
-
     environment:
       - NAME=Harvey
       - AFW_LOG_DIR=/data
-
     volumes:
-#      # Obviously for development experimentation only!
-#        This mounts the code live in the container
-#        This won't work when the code isn't there (e.g., PWD)
-#      - ./greet_app:/app/greet_app
       - type: volume
         source: appdata
         target: /data
-
     networks:
       - app-net
-
     secrets:
       - user-info
 
   fruit:
     # Dumb json list of fruit
-    image: mindthump/fruit_server:edith
-
+    build:
+      context: .
+      dockerfile: fruit_server_app/fruit_server.dockerfile
+    image: mindthump/fruit_server:${REVISION}
     container_name: fruit
-
     ports:
       - "8088:80"
-
     networks:
       - app-net
-
     command: gunicorn --reload -b 0.0.0.0:80 fruit_server:app -k gevent
-
     environment:
       - AFW_LOG_DIR=/data
-
     volumes:
-#      - ./fruit_server_app:/app/fruit_server_app
       - type: volume
         source: appdata
         target: /data
 
   spew:
     image: kennethreitz/httpbin
-
     container_name: spew
-
     ports:
       - "8081:80"
-
     networks:
       - app-net
 
   stash:
     # Use 'http://localhost:5984/_utils/' for UI
     image: couchdb
-
     container_name: stash
-
     ports:
       - "5984:5984"
-
     networks:
       - app-net
-
     volumes:
       - type: volume
         source: appdata
