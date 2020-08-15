@@ -1,6 +1,0 @@
-falcon
-gunicorn
-gevent
-pytest
-pandas
-jupyter

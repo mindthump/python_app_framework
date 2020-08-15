@@ -1,0 +1,10 @@
+ConfigArgParse
+couchDB
+falcon
+gevent
+gunicorn
+jupyter
+pandas
+pathlib2
+pytest
+requests

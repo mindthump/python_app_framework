@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 
 volumes:
   appdata:
@@ -15,7 +15,7 @@ services:
   greet:
     build:
       context: .
-      dockerfile: greet_app/greet.dockerfile
+      target: greet_server
     image: mindthump/greet:${REVISION}
     container_name: greet
     # Keep the container running (for a day) doing nothing = lets us shell in
@@ -39,7 +39,7 @@ services:
     # Dumb json list of fruit
     build:
       context: .
-      dockerfile: fruit_server_app/fruit_server.dockerfile
+      target: fruit_server
     image: mindthump/fruit_server:${REVISION}
     container_name: fruit
     ports:
