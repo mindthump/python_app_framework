@@ -24,6 +24,7 @@ When it's time to promote, set the entrypoint and command as needed.
 
 Quick docker instructions:
 ```
+docker build -t mindthump/greet:latest .
 docker swarm init
 docker stack deploy -c docker-compose.yml simple
 docker container ls
