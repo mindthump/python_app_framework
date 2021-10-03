@@ -40,7 +40,7 @@ class AppFramework(object):
         # Ugly but flexible.
         app_syspaths = {
             "ROOT": "f{self.toolbox_root}",
-            "TOOLBOX": "f{self.toolbox_root}/toolbox"
+            "TOOLBOX": "f{self.toolbox_root}/toolbox",
         }
         # Save the current sys.path (in case of...?)
         os.environ["ORIGINAL_SYSPATH"] = json.dumps(sys.path)
