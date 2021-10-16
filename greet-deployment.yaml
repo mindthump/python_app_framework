@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.24.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: greet
+  name: greet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: greet
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.24.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/app-net: "true"
+        io.kompose.service: greet
+    spec:
+      containers:
+        - args:
+            - 1d
+          command:
+            - sleep
+          env:
+            - name: AFW_LOG_DIR
+              value: /data
+            - name: NAME
+              value: Harvey
+          image: 'mindthump/greet:'
+          name: greet
+          resources: {}
+          volumeMounts:
+            - mountPath: /run/secrets/user-info
+              name: user-info
+            - mountPath: /data
+              name: appdata
+      restartPolicy: Always
+      volumes:
+        - name: user-info
+          secret:
+            items:
+              - key: user-info
+                path: user-info
+            secretName: user-info
+        - name: appdata
+          persistentVolumeClaim:
+            claimName: appdata
+status: {}

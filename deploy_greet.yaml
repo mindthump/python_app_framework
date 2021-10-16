@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
     - name: greet
-      image: mindthump/greet:francie
+      image: mindthump/greet:ingrid
       command: ["sleep"]
       args: ["1d"]
       imagePullPolicy: IfNotPresent
