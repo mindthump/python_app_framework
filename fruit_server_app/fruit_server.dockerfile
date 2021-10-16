@@ -1,4 +1,4 @@
-FROM ubuntu:21.04
+FROM python:3.9
 
 LABEL Author="github.com/mindthump"
 ENV appdir="/app"
