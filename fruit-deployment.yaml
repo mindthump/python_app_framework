@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: fruit
   annotations:
     kompose.cmd: kompose convert
     kompose.version: 1.24.0 (HEAD)
   creationTimestamp: null
   labels:
     io.kompose.service: fruit
-  name: fruit
 spec:
   replicas: 1
   selector:
@@ -26,7 +26,8 @@ spec:
         io.kompose.service: fruit
     spec:
       containers:
-        - args:
+        - name: fruit
+          args:
             - gunicorn
             - --reload
             - -b
@@ -37,11 +38,13 @@ spec:
           env:
             - name: AFW_LOG_DIR
               value: /data
-          image: 'mindthump/fruit_server:'
-          name: fruit
+          image: 'mindthump/fruit-server'
+          tty: true
           ports:
             - containerPort: 80
           resources: {}
+          # This must be here for minikube to get internal images
+          imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /data
               name: appdata

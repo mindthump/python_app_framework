@@ -22,7 +22,7 @@ def initialize_logging(
     file_log_level=logging.DEBUG,
     console_log_level=logging.INFO,
     # WORKSPACE is a Jenkins thing
-    app_root_dir=os.environ.get("WORKSPACE", "."),
+    app_root_dir=os.environ.get("WORKSPACE", ''),
     propagate=False,
 ):
     """
@@ -48,7 +48,7 @@ def initialize_logging(
         logger.propagate = propagate
         afw_log_name = "{}.log".format(log_id)
 
-    afw_log_dir = os.getenv("AFW_LOG_DIR", ".")
+    afw_log_dir = os.getenv("AFW_LOG_DIR", "")
     log_file = Path(app_root_dir).resolve() / afw_log_dir / afw_log_name
     log_file.parent.mkdir(parents=True, exist_ok=True)
     # Set the overall lowest level to report

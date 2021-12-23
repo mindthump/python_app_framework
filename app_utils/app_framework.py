@@ -4,14 +4,11 @@
 A framework for command-line Python "applications", with features that I was in need of at the time.
 """
 
-# ONLY STOCK PYTHON PACKAGES HERE
-# Our stuff comes later. Some of these might be used only in subclasses.
-from __future__ import print_function
-
 import logging
 import os
 import sys
 import json
+from app_utils import utils
 
 # These imports assume this is the "main" script and this file is
 # located at the project root. The directory of the file executed
@@ -36,25 +33,12 @@ class AppFramework(object):
         Call this from subclasses with 'super'
         """
         self.app_args = None
-        self.toolbox_root = locate_toolbox_root()
-        # Ugly but flexible.
-        app_syspaths = {
-            "ROOT": "f{self.toolbox_root}",
-            "TOOLBOX": "f{self.toolbox_root}/toolbox",
-        }
-        # Save the current sys.path (in case of...?)
-        os.environ["ORIGINAL_SYSPATH"] = json.dumps(sys.path)
-        os.environ["APP_SYSPATH"] = json.dumps(app_syspaths)
-        update_syspath(app_syspaths)
 
         # From here on it should be safe to import any local packages
         import requests
         import configargparse
 
-        # locally installed libs can live in toolbox
-        from toolbox import app_utils
-
-        self.logger = app_utils.initialize_logging()
+        self.logger = utils.initialize_logging()
         self.app_args = None
         self.requests = requests
         # Quiet requests "http connection" messages
@@ -169,9 +153,8 @@ class AppFrameworkError(Exception):
     """
 
     def __init__(self, message, fail_app=True):
-        from toolbox import app_utils
 
-        self.logger = app_utils.initialize_logging()
+        self.logger = utils.initialize_logging()
         # Get the class name without hardcoding (reusable)
         if message:
             self.logger.error(
@@ -180,56 +163,6 @@ class AppFrameworkError(Exception):
         if fail_app:
             self.logger.critical("Error is forcing application exit.")
             sys.exit(1)
-
-
-# A path management mechanism
-# Having a proper structure is crucial to using libraries, and ours are
-# currently very messy. We mitigate that by careful sys.path management.
-# We locate our repo root and add it along with the others using relative
-# paths converted to absolutes. We return the required paths as JSON.
-
-
-def locate_toolbox_root():
-    # First put the repo root directory on sys.path from the root,
-    # the parent, or a subdirectory. Users do need to start from one
-    # of these places, otherwise it raises an exception. This lets us
-    # get at our own packages in the toolbox directory. It looks
-    # relative to the current working directory(os.getcwd), not the
-    # location of the script (__file__). Here I only look up and down
-    # one directory from this script.
-
-    toolbox_root = ""
-    if os.path.isdir("toolbox"):
-        toolbox_root = "."
-    elif os.path.isdir("../toolbox"):
-        # We're in a repo root subdirectory.
-        toolbox_root = ".."
-    else:
-        subdirs = next(os.walk("."))[1]
-        for subdir in subdirs:
-            # Look for a known directory
-            if os.path.isdir(os.path.join(subdir, "toolbox")):
-                # We're in the parent of repo root.
-                toolbox_root = subdir
-                break
-    return os.path.abspath(toolbox_root)
-
-
-def update_syspath(path_json=None):
-    # Use to ensure required modules and packages are on sys.path[].
-    # Put the required paths in APP_SYSPATH so we can call this from
-    # anywhere.
-    try:
-        if path_json:
-            required_paths = path_json
-        else:
-            required_paths = json.loads(os.getenv("APP_SYSPATH", ""))
-        # str() is for libpath2 Paths (TBD)
-        for (name, path) in {n: str(p) for n, p in required_paths.items()}.items():
-            if path and os.path.exists(path) and path not in sys.path:
-                sys.path.append(path)
-    except Exception as ex:
-        raise AppFrameworkError("Could not update sys.path: {}".format(ex.message))
 
 
 if __name__ == "__main__":

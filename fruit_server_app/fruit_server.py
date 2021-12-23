@@ -1,10 +1,8 @@
 import json
 import random
-import sys
-import os
 import falcon
 
-from toolbox.app_utils import initialize_logging
+from app_utils import utils
 
 
 class FruitServer(object):
@@ -19,7 +17,7 @@ class FruitServer(object):
         resp.text = json.dumps({"favorite_fruit": random_fruit})
 
 
-logger = initialize_logging()
+logger = utils.initialize_logging()
 
 # falcon.API instances are callable WSGI apps
 app = falcon.App()

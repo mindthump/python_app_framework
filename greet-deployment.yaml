@@ -35,9 +35,10 @@ spec:
               value: /data
             - name: NAME
               value: Harvey
-          image: 'mindthump/greet:'
+          image: 'mindthump/greet'
           name: greet
           resources: {}
+          imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /run/secrets/user-info
               name: user-info

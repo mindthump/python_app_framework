@@ -1,7 +1,6 @@
-import random
 import sys
 import json
-from toolbox import app_framework
+from app_utils import app_framework
 
 
 class Greeter(app_framework.AppFramework):
