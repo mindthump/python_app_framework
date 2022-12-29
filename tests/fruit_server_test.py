@@ -11,5 +11,5 @@ def test_fruit_server():
     fs = fserver.FruitServer()
     fs.on_get(req, resp)
     # We don't know which fruit, but we can see if it's a reasonable dict
-    assert "favorite_fruit" in json.loads(resp.body)
+    assert "favorite_fruit" in json.loads(resp.text)
     pass

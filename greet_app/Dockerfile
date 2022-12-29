@@ -11,5 +11,7 @@ WORKDIR ${appdir}
 RUN apt-get update -y && apt-get install tmux mc vim httpie less pip -y --no-install-recommends
 
 COPY greet_app .
+COPY app_utils ./app_utils
+COPY tests ./tests
 
 RUN pip install --no-cache-dir --disable-pip-version-check -r requirements.txt
