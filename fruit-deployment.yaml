@@ -21,7 +21,7 @@ spec:
             - --reload
             - -b
             - 0.0.0.0:80
-            - fruit_server:app
+            - fruit_server_app.fruit_server:app
             - -k
             - gevent
           image: 'mindthump/fruit-server'
