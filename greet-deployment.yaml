@@ -1,29 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.24.0 (HEAD)
-  creationTimestamp: null
-  labels:
-    io.kompose.service: greet
-  name: greet
+  name: greet-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: greet
-  strategy:
-    type: Recreate
+      app: greet
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.24.0 (HEAD)
-      creationTimestamp: null
       labels:
-        io.kompose.network/app-net: "true"
-        io.kompose.service: greet
+        app: greet
     spec:
       containers:
         - args:
@@ -55,4 +42,3 @@ spec:
         - name: appdata
           persistentVolumeClaim:
             claimName: appdata
-status: {}
