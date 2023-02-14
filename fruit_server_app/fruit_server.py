@@ -12,7 +12,7 @@ class FruitServer(object):
         resp.status = falcon.HTTP_200
         resp.text = "<h1>Ooops.</h1>"
         # Look for the fruit list in the same directory as this file.
-        # TODO: Put the fruit list in something K8s-ish
+        # TODO: Put the fruit list in something K8s-ish, like a ConfigMap
         with open(f"{os.path.dirname(__file__)}/fruit.json") as fruit_list:
             fruits = json.loads(fruit_list.read())
             random_fruit = random.choice(fruits["fruits"])

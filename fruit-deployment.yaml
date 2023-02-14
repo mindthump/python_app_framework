@@ -20,7 +20,7 @@ spec:
             - gunicorn
             - --reload
             - -b
-            - 0.0.0.0:80
+            - 0.0.0.0:8088
             - fruit_server_app.fruit_server:app
             - -k
             - gevent
@@ -30,7 +30,7 @@ spec:
               value: /data
           tty: true
           ports:
-            - containerPort: 80
+            - containerPort: 8088
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /data

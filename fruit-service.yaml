@@ -3,7 +3,9 @@ kind: Service
 metadata:
   name: fruit
 spec:
+  selector:
+    app: fruit
   ports:
-    - name: "8088"
-      port: 8088
-      targetPort: 80
+    - name: fruit
+      port: 80
+      targetPort: 8088

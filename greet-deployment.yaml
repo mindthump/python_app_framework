@@ -24,10 +24,16 @@ spec:
               value: Harvey
           image: 'mindthump/greet'
           name: greet
-          resources: {}
+          resources: 
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
           imagePullPolicy: IfNotPresent
           volumeMounts:
-            - mountPath: /run/secrets/user-info
+            - mountPath: /run/secrets
               name: user-info
             - mountPath: /data
               name: appdata

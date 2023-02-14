@@ -23,9 +23,14 @@ When it's time to promote, set the entrypoint and command as needed.
 ### TBD: Instructions to run the demo, when K8s conversion is complete.
 
 1. Install `minikube` or another Kubernetes implementation. I'm not going to help you with that here, use the Google.
+1. `minikube start --driver=hyperkit --container-runtime=docker`
 2. `eval $(minikube docker-env)`
-3. `minikube image build -t mindthump/fruit-server -f fruit_server_app/fruit-server.dockerfile .`
-4. `kubectl apply` *(or rollout, or whatever)* `-f whatever.yaml`
+3. `minikube image build -t mindthump/fruit-server -f fruit_server_app/Dockerfile .`
+3. `minikube image build -t mindthump/greet -f greet_app/Dockerfile .`
+4. `kubectl apply appdata-pvc.yaml`
+4. `kubectl apply user-info-secret.yaml`
+4. `kubectl apply fruit-deployment.yaml`
+4. `kubectl apply greet-deployment.yaml`
 
 To manage the pods, I like to use either `k9s` or `minikube dashboard`.
 
