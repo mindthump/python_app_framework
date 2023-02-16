@@ -1,17 +1,63 @@
-# The base image probably doesn't need to be quite so hefty...
-FROM ubuntu:lunar
+# Larger footprint image with some basic tools and a non-root user ("morty") with a home and paswordless sudo.
+FROM ubuntu:jammy
 
-LABEL Author="github.com/mindthump"
 ENV appdir="/app"
-ENV TITLE="good person"
 
-WORKDIR ${appdir}
+# Defaults for the non-root user
+ARG UID=1000
+ARG GID=$UID
+ARG USER=morty
+ARG GROUP=$USER
+ARG USER_SHELL=/bin/zsh
+ARG HOME=/home/$USER
 
-# for my own convenience when ssh-ing to instances
-RUN apt-get update -y && apt-get install tmux mc vim less wget pip -y --no-install-recommends
+## zsh and useful command line tools, delete what you don't want or need. Do first to avoid sudo.conf install question.
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install --yes --quiet --autoremove --no-install-suggests --no-install-recommends \
+    tini zip curl git wget zsh byobu stow neovim less bat tree ytree ncdu psmisc mc silversearcher-ag fzf fd-find sudo ca-certificates python3-venv \
+    && apt clean && rm -rf /var/lib/apt/lists/*
+
+# Non-root login user with passwordless sudo
+RUN addgroup --gid $GID $GROUP && \
+    adduser --disabled-password --gecos "" --shell "$USER_SHELL" --home "$HOME" --ingroup "$GROUP" --uid "$UID" "$USER" && \
+    mkdir -p /etc/sudoers.d && \
+    echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER && \
+    chmod 0440 /etc/sudoers.d/$USER && \
+    echo "Set disable_coredump false" >> /etc/sudo.conf  # Work around crappy-ass bug in sudo
+
+## Oh-My-Zsh
+RUN curl -Lo omz-install.sh https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh \
+    && CHSH=no RUNZSH=no sh omz-install.sh --unattended
+
+## Configuration files from my GitHub repo (without git history), see gnu "stow" docs and https://is.gd/CdR7Ua
+RUN git clone --depth 1 https://github.com/mindthump/dotfiles.git ~/.dotfiles \
+    ### Remove some files created during setup, we have our own versions.
+    && rm -f ~/.zshrc ~/.profile omz-install.sh \
+    && stow --dir ~/.dotfiles --stow zsh vim byobu git
+
+## Preload vim plugins.
+# RUN vim +PlugInstall +qall &> /dev/null
+RUN vim +PlugInstall +qall
+
+# Set default timezone, link python and bat
+RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    ln -s /usr/bin/batcat /usr/bin/bat
+
+WORKDIR $HOME
 
 COPY greet_app .
 COPY app_utils ./app_utils
-COPY tests ./tests
+RUN chown -R "$UID:$GID" . /data
 
-RUN pip install --no-cache-dir --disable-pip-version-check -r requirements.txt
+USER $USER
+
+RUN python -m venv venv && \
+    . venv/bin/activate && \
+    pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r ./requirements.txt
+
+# Script to do container startup stuff. CMD gets exec'd at the end of the script.
+ENTRYPOINT ["/usr/bin/tini", "--", "./entrypoint.sh"]
+CMD ["/bin/zsh"]
+

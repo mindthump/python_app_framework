@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: greet-deployment
+  labels:
+    app: greet
 spec:
   replicas: 1
   selector:
@@ -13,38 +15,30 @@ spec:
         app: greet
     spec:
       containers:
-        - args:
-            - 1d
+        - name: greet-container
           command:
             - sleep
+          args:
+            - 1d
+          image: mindthump/greet
           env:
+            - name: USERNAME
+              value: Harvey
             - name: AFW_LOG_DIR
               value: /data
-            - name: NAME
-              value: Harvey
-          image: 'mindthump/greet'
-          name: greet
-          resources: 
-            requests:
-              memory: "64Mi"
-              cpu: "250m"
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           volumeMounts:
-            - mountPath: /run/secrets
-              name: user-info
-            - mountPath: /data
-              name: appdata
-      restartPolicy: Always
+          - name: user-info
+            mountPath: /run/secrets/user-info
+          - name: appdata
+            mountPath: /data
       volumes:
-        - name: user-info
-          secret:
-            items:
-              - key: user-info
-                path: user-info
-            secretName: user-info
         - name: appdata
           persistentVolumeClaim:
             claimName: appdata
+        - name: user-info
+          secret:
+            secretName: user-info
+            items:
+              - key: user-info
+                path: user-info

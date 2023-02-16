@@ -2,7 +2,6 @@ FROM python:3.9
 
 LABEL Author="github.com/mindthump"
 ENV appdir="/app"
-ENV TITLE="good person"
 
 EXPOSE 8000
 
@@ -14,6 +13,6 @@ RUN apt-get update -y && apt-get install tmux mc vim httpie less pip -y --no-ins
 COPY fruit_server_app ./fruit_server_app
 COPY tests ./tests
 COPY app_utils ./app_utils
-COPY conftest.py .
+RUN chown -R "$UID:$GID" . /data
 
 RUN pip install --no-cache-dir --disable-pip-version-check -r fruit_server_app/requirements.txt
