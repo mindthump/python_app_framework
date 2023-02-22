@@ -14,10 +14,14 @@ spec:
       labels:
         app: fruit
     spec:
+      hostname: fruit-pod
+      securityContext:
+        fsGroup: 1000
       containers:
         - name: fruit
-          args:
+          command:
             - gunicorn
+          args:
             - --reload
             - -b
             - 0.0.0.0:8088

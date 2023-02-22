@@ -3,10 +3,16 @@ USER_NAME ?= mindthump
 .PHONY: all build build-fruit build-greet
 .PHONY: deploy deploy-pvc deploy-info deploy-service
 .PHONY: deploy-fruit deploy-greet drop-greet-pod
-.PHONY: fresh
+.PHONY: fresh dashboard
 
+all: fresh build deploy dashboard
 
-all: fresh build deploy
+fresh:
+	minikube stop
+	minikube delete
+	minikube config set WantUpdateNotification false
+	minikube start --driver=hyperkit --container-runtime=docker
+	minikube status
 
 build: build-fruit build-greet
 
@@ -36,10 +42,5 @@ deploy-greet:
 drop-greet-pod:
 	kubectl apply -f greet-pod.yaml
 
-fresh:
-	minikube stop
-	minikube delete
-	minikube config set WantUpdateNotification false
-	minikube start --driver=hyperkit --container-runtime=docker
-	@eval $$(minikube -p minikube docker-env)
-	minikube status
+dashboard:
+	minikube dashboard

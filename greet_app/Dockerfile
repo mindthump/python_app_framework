@@ -14,7 +14,7 @@ ARG HOME=/home/$USER
 ## zsh and useful command line tools, delete what you don't want or need. Do first to avoid sudo.conf install question.
 RUN apt update && \
     DEBIAN_FRONTEND=noninteractive apt install --yes --quiet --autoremove --no-install-suggests --no-install-recommends \
-    tini zip curl git wget zsh byobu stow neovim less bat tree ytree ncdu psmisc mc silversearcher-ag fzf fd-find sudo ca-certificates python3-venv \
+    tini zip curl git wget zsh byobu stow neovim less bat tree ytree ncdu psmisc mc silversearcher-ag sudo ca-certificates python3-venv \
     && apt clean && rm -rf /var/lib/apt/lists/*
 
 # Non-root login user with passwordless sudo
@@ -48,7 +48,7 @@ WORKDIR $HOME
 
 COPY greet_app .
 COPY app_utils ./app_utils
-RUN chown -R "$UID:$GID" . /data
+RUN chown -R "$UID:$GID" .
 
 USER $USER
 
@@ -60,4 +60,3 @@ RUN python -m venv venv && \
 # Script to do container startup stuff. CMD gets exec'd at the end of the script.
 ENTRYPOINT ["/usr/bin/tini", "--", "./entrypoint.sh"]
 CMD ["/bin/zsh"]
-
