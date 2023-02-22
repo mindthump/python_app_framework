@@ -22,8 +22,8 @@ spec:
             - 1d
           image: mindthump/greet
           env:
-            - name: USERNAME
-              value: Harvey
+            - name: IN_CONTAINER
+              value: TRUE
             - name: AFW_LOG_DIR
               value: /data
           imagePullPolicy: Never
@@ -32,6 +32,10 @@ spec:
             mountPath: /run/secrets/user-info
           - name: appdata
             mountPath: /data
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       volumes:
         - name: appdata
           persistentVolumeClaim:
