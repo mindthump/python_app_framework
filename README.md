@@ -26,7 +26,7 @@ that the container will exit and stop.) This lets you open a shell on the machin
 run the python app, debug, or whatever. It can also be started as an ephemeral/debugging container
 in the `fruit` server pod. When it's time to promote, set the entrypoint and command as needed.
 
-### TBD: Instructions to run the demo, when K8s conversion is complete.
+### Instructions
 
 _The `minikube` part can be replaced with starting up Rancher Desktop, colima, or another K8s._
 
@@ -42,6 +42,8 @@ _The `minikube` part can be replaced with starting up Rancher Desktop, colima, o
     2. `kubectl apply user-info-secret.yaml`
     3. `kubectl apply fruit-deployment.yaml`
     4. `kubectl apply greet-deployment.yaml`
+
+Or use the Makefile.
 
 To manage the pods, I like to use the Rancher Desktop Dashboard. You could also use `k9s`, `minikube
 dashboard`, or a lot of other tools.
@@ -70,6 +72,7 @@ command-line application.
 
 ### IN THE WORKS
 
+- Type hints
 - Playing with DBs
-- More Secrets, Services, and networking stuff
+- More Secrets, Services, PVs/PVCs, and networking stuff
 - Deployment using _ArgoCD_ by a _Jenkins_ job
