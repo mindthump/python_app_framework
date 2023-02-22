@@ -61,7 +61,7 @@ class Greeter(app_framework.AppFramework):
                 # NOTE: Random fruit from simple falcon app for now,
                 # TODO: do something more interesting with that app!
                 fruit = (
-                    self.requests.get(self.app_args.fruit_server)
+                    self.requests.get(self.app_args.fruit_server, timeout=2)
                     .json()
                     .get("favorite_fruit")
                 )
