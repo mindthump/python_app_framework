@@ -13,10 +13,10 @@ greet: build-greet deploy-greet
 fruit: build-fruit deploy-fruit
 
 build-fruit:
-	docker image build -t mindthump/fruit-server -f fruit_server_app/Dockerfile .
+	docker image build --no-cache -t $(USER_NAME)/fruit-server -f fruit_server_app/Dockerfile .
 
 build-greet:
-	docker image build -t mindthump/greet -f greet_app/Dockerfile .
+	docker image build --no-cache -t $(USER_NAME)/greet -f greet_app/Dockerfile .
 
 deploy: deploy-pvc deploy-info deploy-fruit deploy-services deploy-greet
 
