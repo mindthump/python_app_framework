@@ -18,16 +18,10 @@ class Greeter(app_framework.AppFramework):
         self.parser.add_argument(
             "--greeting", action="store", env_var="GREETING", default="Hola"
         )
-        # Titles are in a service secret
+        # Titles are in a JSON file
         self.parser.add_argument(
             "--default-title", action="store", env_var="DEFAULT_TITLE", default="nobody"
         )
-        # self.parser.add_argument(
-        #     "--db-host", action="store", env_var="DB_HOST", default=""
-        # )
-        # self.parser.add_argument(
-        #     "--db-name", action="store", env_var="DB_NAME", default="hunny-jar"
-        # )
         self.parser.add_argument(
             "--fruit-server",
             action="store",
@@ -38,8 +32,7 @@ class Greeter(app_framework.AppFramework):
             "--user-info-path",
             action="store",
             env_var="USER_INFO_PATH",
-            # This should be a service secret, mounted to this service.
-            default="/run/secrets/user-info/user-info",
+            default="users.json",
         )
 
     def prepare(self):
@@ -58,6 +51,7 @@ class Greeter(app_framework.AppFramework):
             try:
                 # Default title.
                 title = self.users[user].get("title", "unperson")
+                possessive = self.users[user].get("possessive-pronoun", "their")
                 # NOTE: Random fruit from simple falcon app for now,
                 # TODO: do something more interesting with that app!
                 fruit = (
@@ -67,7 +61,7 @@ class Greeter(app_framework.AppFramework):
                 )
 
                 self.logger.info(
-                    f"{user} is a {title}, and {fruit} is their favorite fruit."
+                    f"{user} is a {title}, and {fruit} is {possessive} favorite fruit."
                 )
             except self.requests.ConnectionError as cerr:
                 self.logger.warning(
@@ -95,7 +89,7 @@ class Greeter(app_framework.AppFramework):
             with open(self.app_args.user_info_path) as user_info:
                 return json.loads(user_info.read())["users"]
         except Exception as ex:
-            self.logger.warning(f"SECRETS FAILURE:\n{ex}")
+            self.logger.warning(f"USER INFO FAILURE:\n{ex}")
             return json.loads("{}")
 
 

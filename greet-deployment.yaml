@@ -23,13 +23,13 @@ spec:
           image: mindthump/greet
           env:
             - name: IN_CONTAINER
-              value: TRUE
+              value: 'OK'
             - name: AFW_LOG_DIR
-              value: /data
+              value: '/data'
           imagePullPolicy: Never
           volumeMounts:
-          - name: user-info
-            mountPath: /run/secrets/user-info
+          - name: user-secret-volume
+            mountPath: /etc/secret-volume
           - name: appdata
             mountPath: /data
       securityContext:
@@ -40,9 +40,6 @@ spec:
         - name: appdata
           persistentVolumeClaim:
             claimName: appdata
-        - name: user-info
+        - name: user-secret-volume
           secret:
-            secretName: user-info
-            items:
-              - key: user-info
-                path: user-info
+            secretName: user-info-secret

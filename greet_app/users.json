@@ -1,0 +1,12 @@
+{
+  "users" : {
+    "Julio" : {
+      "title" : "player",
+      "possessive-pronoun" : "his"
+    },
+    "Adela" : {
+      "title" : "spectator",
+      "possessive-pronoun" : "her"
+    }
+  }
+}
