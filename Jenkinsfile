@@ -2,7 +2,7 @@ pipeline {
   agent {
     kubernetes {
       cloud 'kubernetes-rancher-desktop'
-      nodeSelector 'node-role.kubernetes.io/jenkins=true'
+      nodeSelector 'kubernetes.io/hostname=lima-rancher-desktop'
       yaml '''
 kind: Pod
 spec:
