@@ -1,37 +1,39 @@
+// Uses Declarative syntax to run commands inside a container.
 pipeline {
-  agent {
-    kubernetes {
-      cloud 'kubernetes-rancher-desktop'
-      nodeSelector 'kubernetes.io/hostname=lima-rancher-desktop'
-      yaml '''
+    agent {
+        kubernetes {
+            // Rather than inline YAML, in a multibranch Pipeline you could use: yamlFile 'jenkins-pod.yaml'
+            // Or, to avoid YAML:
+            // containerTemplate {
+            //     name 'shell'
+            //     image 'ubuntu'
+            //     command 'sleep'
+            //     args 'infinity'
+            // }
+            yaml '''
+apiVersion: v1
 kind: Pod
 spec:
-  volumes:
-    - name: appdata
-      emptyDir: {}
   containers:
-    - name: toolkit
-      image: mindthump/toolkit
-      imagePullPolicy: Never
-      command:
-        - sleep
-      args:
-        - 1d
-      volumeMounts:
-        - name: appdata
-          mountPath: /data
+  - name: shell
+    image: alpine
+    command:
+    - sleep
+    args:
+    - infinity
 '''
-    }
-  }
-
-
-  stages {
-    stage('Main') {
-      steps {
-        container ('toolkit') {
-          sh 'uname -a'
+            // Can also wrap individual steps:
+            // container('shell') {
+            //     sh 'hostname'
+            // }
+            defaultContainer 'shell'
         }
-      }
     }
-  }
+    stages {
+        stage('Main') {
+            steps {
+                sh 'hostname'
+            }
+        }
+    }
 }
