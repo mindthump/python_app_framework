@@ -29,11 +29,10 @@ spec:
     stage('Main') {
       steps {
         container ('toolkit') {
-          sh 'uname -a'
+          sh 'uname -a; env; pwd; ls -al'
         }
         container ('jnlp') {
-          sh 'uname -a'
-          sh 'ls -lR /opt'
+          sh 'uname -a; env; pwd; ls -al'
         }
       }
     }
