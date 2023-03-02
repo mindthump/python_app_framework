@@ -11,7 +11,7 @@ spec:
       emptyDir: {}
   containers:
     - name: toolkit
-      image: mindthump/toolkit
+      image: toolkit:tini
       imagePullPolicy: Never
       command:
         - sleep
