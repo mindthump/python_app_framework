@@ -13,6 +13,9 @@ this little framework's sample app into docker containers, then a docker-compose
 I now have this running in **Kubernetes**, in particular on Rancher Desktop (or `minikube`) on my
 Macbook Pro.
 
+My current personal preference is using an elegant vagrant setup on VMs (e.g., VirtualBox). I call it VKK for short:
+    https://github.com/techiescamp/vagrant-kubeadm-kubernetes.git
+
 The stack includes a tiny REST app that returns a simple JSON list of fruits, so I can play with
 the `requests` library. (I'm planning to do more with this later.) I can spin up a DB container but
 don't use it yet. Some fake user info comes in as a "service secret". (The secrets stuff needs more
@@ -34,19 +37,24 @@ _The `minikube` part can be replaced with starting up Rancher Desktop, colima, o
     1. Install `minikube` or another Kubernetes implementation. I'm not going to help you with that here, use the Google.
     2. `minikube start --driver=hyperkit --container-runtime=docker`
     3. `eval $(minikube docker-env)`
+
+NOTE: the directory '/mnt/app-data' must exist on the node the application will run on. This can be done in a node setup script or manually on the node via ssh, etc.
+
 2. Build the images (or use docker, buildah, nerdctl, etc.)
     1. `minikube image build -t mindthump/fruit-server -f fruit_server_app/Dockerfile .`
     2. `minikube image build -t mindthump/greet -f greet_app/Dockerfile .`
+
 3. Deploy the resources
-    1. `kubectl apply appdata-pvc.yaml`
-    2. `kubectl apply user-info-secret.yaml`
-    3. `kubectl apply fruit-deployment.yaml`
-    4. `kubectl apply greet-deployment.yaml`
+    1. `kubectl apply -f appdata-pv.yaml` # Persistent Volume to create storage class and allocate storage
+    2. `kubectl apply -f appdata-pvc.yaml` # Persistent Volume Claim assigning storage to the application at a path
+    3. `kubectl apply -f fruit-service-nodeport.yaml` # Service to open port 30088 on the node to port 8088 on the pod
+    4. `kubectl apply -f fruit-deployment.yaml` # Deploy the application
+    5. `kubectl apply -f user-info-secret.yaml` # Create password secret (mounted in greet, but not used yet)
 
 Or use the Makefile.
 
 To manage the pods, I like to use the Rancher Desktop Dashboard. You could also use `k9s`, `minikube
-dashboard`, or a lot of other tools.
+dashboard`, or a lot of other tools. VKK has a dashboard; see the README.md file for instructions.
 
 ## AppFramework
 

@@ -3,7 +3,7 @@ kind: StorageClass
 metadata:
   name: local-storage
 provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -11,19 +11,19 @@ metadata:
   name: appdata
 spec:
   capacity:
-    storage: 100Gi
+    storage: 10Gi
   volumeMode: Filesystem
   accessModes:
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
   storageClassName: local-storage
   local:
-    path: /mnt/app-data
+    path: /data
   nodeAffinity:
     required:
       nodeSelectorTerms:
       - matchExpressions:
-        - key: kubernetes.io/hostname
+        - key: kubernetes.io/os
           operator: In
           values:
-          - worker-node01
+          - linux
