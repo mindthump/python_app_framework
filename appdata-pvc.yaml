@@ -3,9 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: appdata
 spec:
-  storageClassName: local-storage
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 128Mi

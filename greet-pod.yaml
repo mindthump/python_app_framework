@@ -17,8 +17,8 @@ spec:
             path: user-info
   containers:
     - name: greet-container
-      image: mindthump/greet
-      imagePullPolicy: Never
+      image: mindthump/greet-app:r20230822a2
+      imagePullPolicy: IfNotPresent
       command:
         - sleep
       args:

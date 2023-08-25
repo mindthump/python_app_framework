@@ -1,34 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.24.0 (HEAD)
-  creationTimestamp: null
+  name: spew-deployment
   labels:
-    io.kompose.service: spew
-  name: spew
+    app: spew
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: spew
-  strategy: {}
+      app: spew-pod
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.24.0 (HEAD)
-      creationTimestamp: null
       labels:
-        io.kompose.network/app-net: "true"
-        io.kompose.service: spew
+        app: spew-pod
     spec:
       containers:
         - image: kennethreitz/httpbin
-          name: spew
+          name: spew-container
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
-          resources: {}
       restartPolicy: Always
-status: {}

@@ -10,8 +10,13 @@ code, and I didn't like any of the frameworks out there. I was inspired by some 
 While the demo was originally just some basic python modules, when I started consulting at Taos
 Mountain they encouraged me to learn Google Cloud and Docker. To help me learn that, I converted
 this little framework's sample app into docker containers, then a docker-compose application stack.
-I now have this running in **Kubernetes**, in particular on Rancher Desktop (or `minikube`) on my
-Macbook Pro.
+
+I now have this running in **Kubernetes**. It should run in pretty much any K8s. Some of my favorites
+for local development on my Macbook Pro:
+
+- Vagrant Kubernetes (https://github.com/techiescamp/vagrant-kubeadm-kubernetes)
+- minikube
+- Rancher Desktop
 
 My current personal preference is using an elegant vagrant setup on VMs (e.g., VirtualBox). I call it VKK for short:
     https://github.com/techiescamp/vagrant-kubeadm-kubernetes.git
@@ -31,25 +36,25 @@ in the `fruit` server pod. When it's time to promote, set the entrypoint and com
 
 ### Instructions
 
-_The `minikube` part can be replaced with starting up Rancher Desktop, colima, or another K8s._
 
-1. Start up a kubernetes environment
-    1. Install `minikube` or another Kubernetes implementation. I'm not going to help you with that here, use the Google.
+1. Start up a kubernetes environment. Here's `minikube`:
+    1. Install `minikube`.
     2. `minikube start --driver=hyperkit --container-runtime=docker`
     3. `eval $(minikube docker-env)`
 
-NOTE: the directory '/mnt/app-data' must exist on the node the application will run on. This can be done in a node setup script or manually on the node via ssh, etc.
-
-2. Build the images (or use docker, buildah, nerdctl, etc.)
+2. Build the images (or use docker, buildah, nerdctl, kaniko, etc.) Push/load image to registry as needed.
     1. `minikube image build -t mindthump/fruit-server -f fruit_server_app/Dockerfile .`
     2. `minikube image build -t mindthump/greet -f greet_app/Dockerfile .`
 
-3. Deploy the resources
-    1. `kubectl apply -f appdata-pv.yaml` # Persistent Volume to create storage class and allocate storage
-    2. `kubectl apply -f appdata-pvc.yaml` # Persistent Volume Claim assigning storage to the application at a path
-    3. `kubectl apply -f fruit-service-nodeport.yaml` # Service to open port 30088 on the node to port 8088 on the pod
-    4. `kubectl apply -f fruit-deployment.yaml` # Deploy the application
+3. Deploy the resources. (NOTE: #1 deploys a local-path provisioner for Persistent Volumes, #2 will create a PVC with it.)
+    1. `kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml`
+    2. `kubectl apply -f appdata-pvc.yaml` # Persistent Volume Claim assigning storage to the application at the path
+    3. `kubectl apply -f fruit-services.yaml` # Services to open ports; node-ip:30088 on the node and fruit:80 in the cluster
+    4. `kubectl apply -f fruit-deployment.yaml` # Deploy the server application
     5. `kubectl apply -f user-info-secret.yaml` # Create password secret (mounted in greet, but not used yet)
+
+4. Start the client cron job. (There is also a single-pod version, 'greet-pod.yaml' that will start and sleep for 1 day.)
+    1. `kubectl apply -f greet-cronjob.yaml`
 
 Or use the Makefile.
 

@@ -1,3 +1,4 @@
+import random
 import sys
 import json
 from app_utils import app_framework
@@ -12,6 +13,7 @@ class Greeter(app_framework.AppFramework):
         self.db_server = None
         self.foo_db = None
         self.fruit_list = None
+        self.selected_users = None
 
     def additional_arguments(self):
         # Only add_arguments, Framework will do the parsing
@@ -37,14 +39,18 @@ class Greeter(app_framework.AppFramework):
 
     def prepare(self):
         # Get resources, servers, etc. ready
+        self.logger.info("Preparing to start.")
         self.users = self.get_user_info()
+        # print(f"There are {len(self.users)} users: {self.users}.")
+        # run() can handle a list; here we randomly subset the full user list.
+        self.selected_users = random.sample(list(self.users.keys()), 1)
         # self.setup_db()
 
     def run(self):
         # TODO: Break this up, it's way overloaded
         # Actual application work here
 
-        for user in self.users:
+        for user in self.selected_users:
             self.logger.info(f"Preparing to greet user {user}.")
             print(f"{self.app_args.greeting}, {user}!")
 

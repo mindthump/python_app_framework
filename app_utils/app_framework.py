@@ -118,11 +118,10 @@ class AppFramework(object):
         try:
             rc = self.run()
         except Exception as ex:
-            self.logger.warn("Exception in run() method: {}".format(ex.message))
-            raise
+            raise AppFrameworkError(f"Exception type {type(ex)} in run() method: {ex.args}")
         finally:
             self.cleanup()
-        self.logger.debug("CIAppFramework execute() exiting, RC={}.".format(rc))
+        self.logger.debug(f"CIAppFramework execute() exiting, RC={rc}.")
         return rc
 
     def args_from_dict(self, args_dict):
@@ -158,7 +157,7 @@ class AppFrameworkError(Exception):
         # Get the class name without hardcoding (reusable)
         if message:
             self.logger.error(
-                "{errsrc}: {msg}".format(errsrc=self.__class__.__name__, msg=message)
+                "{self.__class__.__name__}: {message}"
             )
         if fail_app:
             self.logger.critical("Error is forcing application exit.")

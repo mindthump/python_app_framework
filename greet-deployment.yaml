@@ -20,13 +20,13 @@ spec:
             - sleep
           args:
             - 1d
-          image: mindthump/greet-app:r20230822a1
+          image: mindthump/greet-app:r20230822a2
           env:
             - name: IN_CONTAINER
               value: 'OK'
             - name: AFW_LOG_DIR
               value: '/data'
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           volumeMounts:
           - name: user-secret-volume
             mountPath: /etc/secret-volume

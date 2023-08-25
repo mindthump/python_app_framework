@@ -1,62 +1,12 @@
-# Larger footprint image with some basic tools and a non-root user ("morty") with a home and paswordless sudo.
-FROM ubuntu:jammy
+FROM python:3.9-alpine
 
-ENV appdir="/app"
-
-# Defaults for the non-root user
-ARG UID=1000
-ARG GID=$UID
-ARG USER=morty
-ARG GROUP=$USER
-ARG USER_SHELL=/bin/zsh
-ARG HOME=/home/$USER
-
-## zsh and useful command line tools, delete what you don't want or need. Do first to avoid sudo.conf install question.
-RUN apt update && \
-    DEBIAN_FRONTEND=noninteractive apt install --yes --quiet --autoremove --no-install-suggests --no-install-recommends \
-    tini zip curl git wget zsh byobu stow neovim less bat tree ytree ncdu psmisc mc silversearcher-ag sudo ca-certificates python3-venv \
-    && apt clean && rm -rf /var/lib/apt/lists/*
-
-# Non-root login user with passwordless sudo
-RUN addgroup --gid $GID $GROUP && \
-    adduser --disabled-password --gecos "" --shell "$USER_SHELL" --home "$HOME" --ingroup "$GROUP" --uid "$UID" "$USER" && \
-    mkdir -p /etc/sudoers.d && \
-    echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER && \
-    chmod 0440 /etc/sudoers.d/$USER && \
-    echo "Set disable_coredump false" >> /etc/sudo.conf  # Work around crappy-ass bug in sudo
-
-## Oh-My-Zsh
-RUN curl -Lo omz-install.sh https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh \
-    && CHSH=no RUNZSH=no sh omz-install.sh --unattended
-
-## Configuration files from my GitHub repo (without git history), see gnu "stow" docs and https://is.gd/CdR7Ua
-RUN git clone --depth 1 https://github.com/mindthump/dotfiles.git ~/.dotfiles \
-    ### Remove some files created during setup, we have our own versions.
-    && rm -f ~/.zshrc ~/.profile omz-install.sh \
-    && stow --dir ~/.dotfiles --stow zsh vim byobu git
-
-## Preload vim plugins.
-# RUN vim +PlugInstall +qall &> /dev/null
-RUN vim +PlugInstall +qall
-
-# Set default timezone, link python and bat
-RUN ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    ln -s /usr/bin/python3 /usr/bin/python && \
-    ln -s /usr/bin/batcat /usr/bin/bat
-
-WORKDIR $HOME
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY greet_app .
 COPY app_utils ./app_utils
-RUN chown -R "$UID:$GID" .
 
-USER $USER
+RUN pip install -r requirements.txt
 
-RUN python -m venv venv && \
-    . venv/bin/activate && \
-    pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r ./requirements.txt
-
-# Script to do container startup stuff. CMD gets exec'd at the end of the script.
-ENTRYPOINT ["/usr/bin/tini", "--", "./entrypoint.sh"]
-CMD ["/bin/zsh"]
+CMD ["ash"]

@@ -4,9 +4,17 @@
       "title" : "player",
       "possessive-pronoun" : "his"
     },
-    "Adela" : {
+    "Alice" : {
       "title" : "spectator",
       "possessive-pronoun" : "her"
+    },
+    "Matt" : {
+      "title" : "spy",
+      "possessive-pronoun" : "his"
+    },
+    "Pat" : {
+      "title" : "administrator",
+      "possessive-pronoun" : "their"
     }
   }
 }
