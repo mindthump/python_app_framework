@@ -15,8 +15,6 @@ spec:
         app: fruit
     spec:
       hostname: fruit-pod
-      securityContext:
-        fsGroup: 1000
       containers:
         - name: fruit
           command:
@@ -28,7 +26,7 @@ spec:
             - fruit_server_app.fruit_server:app
             - -k
             - gevent
-          image: 'mindthump/fruit-server'
+          image: 'mindthump/fruit-server:latest'
           env:
             - name: AFW_LOG_DIR
               value: /data
@@ -42,4 +40,4 @@ spec:
       volumes:
         - name: appdata
           persistentVolumeClaim:
-            claimName: appdata
+            claimName: appdata-pvc

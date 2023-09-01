@@ -20,7 +20,7 @@ spec:
             - sleep
           args:
             - 1d
-          image: mindthump/greet-app:r20230822a2
+          image: docker.io/mindthump/greet:20230831-1402
           env:
             - name: IN_CONTAINER
               value: 'OK'
@@ -32,14 +32,10 @@ spec:
             mountPath: /etc/secret-volume
           - name: appdata
             mountPath: /data
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
       volumes:
         - name: appdata
           persistentVolumeClaim:
-            claimName: appdata
+            claimName: appdata-pvc
         - name: user-secret-volume
           secret:
             secretName: user-info-secret

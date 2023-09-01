@@ -1,11 +1,11 @@
-apiVersion: v1
 kind: PersistentVolumeClaim
+apiVersion: v1
 metadata:
-  name: appdata-pvc
+  name: oebs-hostpath-pvc
 spec:
-  storageClassName: local-path
+  storageClassName: openebs-hostpath
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5G
+      storage: 5M
