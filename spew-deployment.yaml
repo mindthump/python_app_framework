@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: spew-deployment
   labels:
-    app: spew
+    application: paf
 spec:
   replicas: 1
   selector:
@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        app: spew-pod
+        application: paf
     spec:
       containers:
         - image: kennethreitz/httpbin

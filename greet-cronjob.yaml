@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   name: greet-job
   labels:
-    app: greet
+    application: paf
 spec:
   schedule: "* * * * *"
   jobTemplate:
@@ -12,7 +12,7 @@ spec:
       template:
         metadata:
           labels:
-            app: greet
+            application: paf
         spec:
           containers:
             - name: greet-job

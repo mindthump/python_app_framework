@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: greet-deployment
   labels:
-    app: greet
+    application: paf
 spec:
   replicas: 1
   selector:
@@ -12,7 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        app: greet
+        application: paf
     spec:
       containers:
         - name: greet-container
@@ -20,13 +20,13 @@ spec:
             - sleep
           args:
             - 1d
-          image: docker.io/mindthump/greet:20230831-1402
+          image: docker.io/mindthump/greet:20230901-0720
           env:
             - name: IN_CONTAINER
               value: 'OK'
             - name: AFW_LOG_DIR
               value: '/data'
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           volumeMounts:
           - name: user-secret-volume
             mountPath: /etc/secret-volume

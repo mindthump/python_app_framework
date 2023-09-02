@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: greet-pod
   labels:
-    app: greet
+    application: paf
 spec:
   volumes:
     - name: appdata

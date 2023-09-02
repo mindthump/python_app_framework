@@ -1,19 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.24.0 (HEAD)
-  creationTimestamp: null
-  labels:
-    io.kompose.service: spew
   name: spew
+  labels:
+    application: paf
 spec:
   ports:
     - name: "8081"
       port: 8081
       targetPort: 80
   selector:
-    io.kompose.service: spew
-status:
-  loadBalancer: {}
+    application: paf
