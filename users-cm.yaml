@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: users
+  namespace: default
+  labels:
+    app: greet
+    project: paf
+data:
+  users.json: |
+    {
+      "users" : {
+        "Julio" : {
+          "title" : "a player",
+          "greeting" : "Hola",
+          "possessive-pronoun" : "his"
+        },
+        "Alice" : {
+          "title" : "a spectator",
+          "greeting" : "Hello",
+          "possessive-pronoun" : "her"
+        },
+        "Matt" : {
+          "title" : "a spy",
+          "greeting" : "Hey there",
+          "possessive-pronoun" : "his"
+        },
+        "Pat" : {
+          "title" : "an administrator",
+          "greeting" : "Howdy",
+          "possessive-pronoun" : "their"
+        },
+        "Wombat" : {
+          "possessive-pronoun" : "its"
+        }
+      }
+    }

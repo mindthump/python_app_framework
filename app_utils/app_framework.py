@@ -157,7 +157,7 @@ class AppFrameworkError(Exception):
         # Get the class name without hardcoding (reusable)
         if message:
             self.logger.error(
-                "{self.__class__.__name__}: {message}"
+                f"{self.__class__.__name__}: {message}"
             )
         if fail_app:
             self.logger.critical("Error is forcing application exit.")

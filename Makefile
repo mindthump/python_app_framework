@@ -37,3 +37,5 @@ destroy:
 	kubectl delete -f fruit-services.yaml
 	kubectl delete -f appdata-pvc.yaml
 	kubectl delete -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml
+
+all: build deploy

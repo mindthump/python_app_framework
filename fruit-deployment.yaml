@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: fruit-deployment
   labels:
-    application: paf
+    project: paf
 spec:
   replicas: 1
   selector:
@@ -12,7 +12,8 @@ spec:
   template:
     metadata:
       labels:
-        application: paf
+        app: fruit
+        project: paf
     spec:
       hostname: fruit-pod
       containers:
@@ -26,7 +27,7 @@ spec:
             - fruit_server_app.fruit_server:app
             - -k
             - gevent
-          image: 'mindthump/fruit-server:20230901-0720'
+          image: mindthump/fruit-server:20230906-2029
           env:
             - name: AFW_LOG_DIR
               value: /data

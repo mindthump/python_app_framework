@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: greet-deployment
   labels:
-    application: paf
+    project: paf
 spec:
   replicas: 1
   selector:
@@ -12,15 +12,16 @@ spec:
   template:
     metadata:
       labels:
-        application: paf
+        app: greet
+        project: paf
     spec:
       containers:
-        - name: greet-container
+        - name: greet
           command:
             - sleep
           args:
             - 1d
-          image: docker.io/mindthump/greet:20230901-0720
+          image: docker.io/mindthump/greet:20230906-2029
           env:
             - name: IN_CONTAINER
               value: 'OK'
@@ -29,9 +30,11 @@ spec:
           imagePullPolicy: IfNotPresent
           volumeMounts:
           - name: user-secret-volume
-            mountPath: /etc/secret-volume
+            mountPath: /opt/secret-data
           - name: appdata
             mountPath: /data
+          - name: users-volume
+            mountPath: /opt/user-data
       volumes:
         - name: appdata
           persistentVolumeClaim:
@@ -39,3 +42,6 @@ spec:
         - name: user-secret-volume
           secret:
             secretName: user-info-secret
+        - name: users-volume
+          configMap:
+            name: users

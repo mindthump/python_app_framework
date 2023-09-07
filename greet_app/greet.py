@@ -18,11 +18,11 @@ class Greeter(app_framework.AppFramework):
     def additional_arguments(self):
         # Only add_arguments, Framework will do the parsing
         self.parser.add_argument(
-            "--greeting", action="store", env_var="GREETING", default="Hola"
+            "--default-greeting", action="store", env_var="DEFAULT_GREETING", default="Salutations"
         )
         # Titles are in a JSON file
         self.parser.add_argument(
-            "--default-title", action="store", env_var="DEFAULT_TITLE", default="nobody"
+            "--default-title", action="store", env_var="DEFAULT_TITLE", default="a nobody"
         )
         self.parser.add_argument(
             "--fruit-server",
@@ -34,7 +34,7 @@ class Greeter(app_framework.AppFramework):
             "--user-info-path",
             action="store",
             env_var="USER_INFO_PATH",
-            default="users.json",
+            default="/opt/user-data/users.json",
         )
 
     def prepare(self):
@@ -52,22 +52,17 @@ class Greeter(app_framework.AppFramework):
 
         for user in self.selected_users:
             self.logger.info(f"Preparing to greet user {user}.")
-            print(f"{self.app_args.greeting}, {user}!")
+            title = self.users[user].get("title", self.app_args.default_title)
+            possessive = self.users[user].get("possessive-pronoun", "their")
+            greeting = self.users[user].get("greeting", self.app_args.default_greeting)
+            print(f"{greeting}, {user}!")
 
             try:
-                # Default title.
-                title = self.users[user].get("title", "unperson")
-                possessive = self.users[user].get("possessive-pronoun", "their")
-                # NOTE: Random fruit from simple falcon app for now,
-                # TODO: do something more interesting with that app!
+                # Random fruit from simple falcon app
                 fruit = (
                     self.requests.get(self.app_args.fruit_server, timeout=2)
                     .json()
                     .get("favorite_fruit")
-                )
-
-                self.logger.info(
-                    f"{user} is a {title}, and {fruit} is {possessive} favorite fruit."
                 )
             except self.requests.ConnectionError as cerr:
                 self.logger.warning(
@@ -81,6 +76,10 @@ class Greeter(app_framework.AppFramework):
                 )
                 self.logger.debug(f"USER INFO FAIL:\n{ex}")
                 return 99
+            
+            self.logger.info(
+                f"{user} is {title}, and {fruit} is {possessive} favorite fruit."
+            )
 
         # DEBUG: raise app_framework.AppFrameworkError("Error Condition: RED")
         return 0
@@ -91,7 +90,6 @@ class Greeter(app_framework.AppFramework):
 
     def get_user_info(self):
         try:
-            # Shhh... it's a secret.
             with open(self.app_args.user_info_path) as user_info:
                 return json.loads(user_info.read())["users"]
         except Exception as ex:
