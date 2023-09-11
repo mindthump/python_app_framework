@@ -1,20 +1,20 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: superpod
+  name: toolkitpod
   labels:
-    app: super
+    app: toolkit
     project: paf
 spec:
   containers:
-    - name: super
+    - name: toolkit
       securityContext:
         privileged: true
       command:
         - sleep
       args:
         - infinity
-      image: docker.io/mindthump/toolkit:alpine
+      image: docker.io/mindthump/toolkit:main
       env:
         - name: IN_CONTAINER
           value: 'OK'
