@@ -27,7 +27,7 @@ spec:
             - fruit_server_app.fruit_server:app
             - -k
             - gevent
-          image: mindthump/fruit-server:20230906-2029
+          image: mindthump/fruit-server:20230907-1303
           env:
             - name: AFW_LOG_DIR
               value: /data

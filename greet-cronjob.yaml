@@ -6,7 +6,7 @@ metadata:
   labels:
     application: paf
 spec:
-  schedule: "* * * * *"
+  schedule: "*/5 * * * *"
   jobTemplate:
     spec:
       template:
@@ -15,12 +15,12 @@ spec:
             application: paf
         spec:
           containers:
-            - name: greet-job
+            - name: greet
               command:
                 - python
               args:
                 - greet.py
-              image: mindthump/greet-app:r20230822a2
+              image: docker.io/mindthump/greet:20230907-1303
               env:
                 - name: IN_CONTAINER
                   value: 'OK'
@@ -29,18 +29,19 @@ spec:
               imagePullPolicy: IfNotPresent
               volumeMounts:
               - name: user-secret-volume
-                mountPath: /etc/secret-volume
+                mountPath: /opt/secret-data
               - name: appdata
                 mountPath: /data
+              - name: users-volume
+                mountPath: /opt/user-data
           restartPolicy: Never
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
           volumes:
             - name: appdata
               persistentVolumeClaim:
-                claimName: appdata
+                claimName: appdata-pvc
             - name: user-secret-volume
               secret:
                 secretName: user-info-secret
+            - name: users-volume
+              configMap:
+                name: users

@@ -21,7 +21,7 @@ spec:
             - sleep
           args:
             - 1d
-          image: docker.io/mindthump/greet:20230906-2029
+          image: docker.io/mindthump/greet:20230907-1303
           env:
             - name: IN_CONTAINER
               value: 'OK'

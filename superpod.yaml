@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: superpod
+  labels:
+    app: super
+    project: paf
+spec:
+  containers:
+    - name: super
+      securityContext:
+        privileged: true
+      command:
+        - sleep
+      args:
+        - infinity
+      image: docker.io/mindthump/toolkit:alpine
+      env:
+        - name: IN_CONTAINER
+          value: 'OK'
+        - name: AFW_LOG_DIR
+          value: '/data'
+      imagePullPolicy: Always
+      volumeMounts:
+      - name: user-secret-volume
+        mountPath: /opt/secret-data
+      - name: appdata
+        mountPath: /data
+      - name: users-volume
+        mountPath: /opt/user-data
+  volumes:
+    - name: appdata
+      persistentVolumeClaim:
+        claimName: appdata-pvc
+    - name: user-secret-volume
+      secret:
+        secretName: user-info-secret
+    - name: users-volume
+      configMap:
+        name: users
