@@ -4,12 +4,13 @@ APP_NAMESPACE := paf
 
 .PHONY: all
 .PHONY: build build-fruit build-greet
+.PHONY: namespace
 .PHONY: deploy deploy-localvolume deploy-info deploy-services deploy-apps
 .PHONY: redeploy
 .PHONY: destroy
-.PHONY: superpod
+.PHONY: toolkit
 
-deploy: deploy-localvolume deploy-info deploy-services deploy-apps
+deploy: namespace deploy-localvolume deploy-info deploy-services deploy-apps
 
 build: build-fruit build-greet
 
@@ -19,12 +20,15 @@ build-fruit:
 build-greet:
 	docker image build --no-cache -t ${USER_NAME}/greet:${DTS} -f greet_app/Dockerfile .
 
+namespace:
+	kubectl create namespace paf
 deploy-localvolume:
-	kubectl -n ${APP_NAMESPACE} apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml
+	kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml
 	kubectl -n ${APP_NAMESPACE} apply -f appdata-pvc.yaml
 
 deploy-info:
 	kubectl -n ${APP_NAMESPACE} apply -f user-info-secret.yaml
+	kubectl -n ${APP_NAMESPACE} apply -f users-cm.yaml
 
 deploy-services:
 	kubectl -n ${APP_NAMESPACE} apply -f fruit-services.yaml
@@ -45,7 +49,7 @@ redeploy-apps: deploy-apps
 	kubectl -n ${APP_NAMESPACE} rollout restart deployment fruit-deployment
 	kubectl -n ${APP_NAMESPACE} rollout restart deployment greet-deployment
 
-superpod:
-	kubectl -n ${APP_NAMESPACE} apply -f superpod.yaml
+toolkit:
+	kubectl -n ${APP_NAMESPACE} apply -f toolkit.yaml
 
 all: build deploy
